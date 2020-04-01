@@ -34,6 +34,7 @@ public class TestApp {
             Registry registry = LocateRegistry.getRegistry(); //default port 1099
             Message stub = (Message) registry.lookup(remote_object_name);
             String response = stub.sendMessage(sub_protocol, operand1, operand2);
+            System.out.println(response);
         } catch (Exception e) {
             System.err.println("TestApp exception: " + e.toString());
             e.printStackTrace();
