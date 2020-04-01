@@ -1,22 +1,30 @@
-import javafx.util.Pair;
-
 public class Chunk {
-    private Pair<String, Integer> chunk_id;
+    private String file_id;
+    private Integer chunk_no;
     private Float chunk_size; //DONT KNOW IF THEY ARE FINAL OR NOT
     private int replication_degree;
 
-    public Chunk(Pair<String, Integer> chunk_id, Float chunk_size, int replication_degree) {
-        this.chunk_id = chunk_id;
+    public Chunk(String file_id, Integer chunk_no, Float chunk_size, int replication_degree) {
+        this.file_id = file_id;
+        this.chunk_no = chunk_no;
         this.chunk_size = chunk_size;
         this.replication_degree = replication_degree;
     }
 
-    public Pair<String, Integer> getChunk_id() {
-        return chunk_id;
+    public String getFile_id() {
+        return file_id;
     }
 
-    public void setChunk_id(Pair<String, Integer> chunk_id) {
-        this.chunk_id = chunk_id;
+    public void setFile_id(String file_id) {
+        this.file_id = file_id;
+    }
+
+    public Integer getChunk_no() {
+        return chunk_no;
+    }
+
+    public void setChunk_no(Integer chunk_no) {
+        this.chunk_no = chunk_no;
     }
 
     public Float getChunk_size() {
