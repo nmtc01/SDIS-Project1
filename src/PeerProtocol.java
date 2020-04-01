@@ -34,16 +34,16 @@ public class PeerProtocol implements Message {
             Registry registry = LocateRegistry.getRegistry();
             registry.bind(remote_object_name, stub);
 
-            System.err.println("Server ready");
+            System.err.println("Starting Peer Protocol");
         } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
+            System.err.println("Peer Protocol exception: " + e.toString());
             e.printStackTrace();
         }
     }
 
     @Override
     public String sendMessage(String operation, String operand1, Integer operand2) throws RemoteException {
-        String reply = "I'm communicating";
+        String reply = "I'm communicating " + operation + " " + operand1 + " " + operand2;
         return reply;
     }
 }
