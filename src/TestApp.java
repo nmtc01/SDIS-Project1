@@ -9,8 +9,8 @@ public class TestApp {
 
     public static boolean parseArgs(String[] args) {
         //Check the number of arguments given
-        if (args.length != 4) {
-            System.out.println("Usage: java TestApp <peer_ap> <sub_protocol> <opnd_1> <opnd_2>");
+        if (args.length != 4 && args[1] == "BACKUP" && args.length != 3) {
+            System.out.println("Usage: java TestApp <peer_ap> <sub_protocol> <opnd_1> [<opnd_2>]");
             return false;
         }
 
@@ -20,7 +20,8 @@ public class TestApp {
         sub_protocol = args[1];
         //Parse operands
         operand1 = args[2];
-        operand2 = Integer.parseInt(args[3]);
+        if (sub_protocol.equals("BACKUP"))
+            operand2 = Integer.parseInt(args[3]);
 
         return true;
     }

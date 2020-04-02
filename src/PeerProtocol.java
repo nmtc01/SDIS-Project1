@@ -5,6 +5,9 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class PeerProtocol implements Message {
     private static String remote_object_name;
+    private static String sub_protocol;
+    private static String operand1;
+    private static Integer replication_degree;
 
     public static boolean parseArgs(String[] args) {
         //Check the number of arguments given
@@ -21,11 +24,7 @@ public class PeerProtocol implements Message {
         return true;
     }
 
-    public static void main(String args[]) {
-        //Parse args
-        if (!parseArgs(args))
-            return;
-
+    public static void establishCommunication() {
         try {
             PeerProtocol peer = new PeerProtocol();
             Message stub = (Message) UnicastRemoteObject.exportObject(peer, 0);
@@ -41,9 +40,53 @@ public class PeerProtocol implements Message {
         }
     }
 
+    public static void main(String args[]) {
+        //Parse args
+        if (!parseArgs(args))
+            return;
+
+        establishCommunication();
+    }
+
+    public static String handleRequest(){
+        //Choose the path
+        switch (sub_protocol) {
+            case "BACKUP": {
+                System.out.println("case 0 - TODO");
+                System.out.println(sub_protocol + " " + operand1 + " " + replication_degree);
+                break;
+            }
+            case "RESTORE": {
+                System.out.println("case 1 - TODO");
+                System.out.println(sub_protocol + " " + operand1);
+                break;
+            }
+            case "DELETE": {
+                System.out.println("case 2 - TODO");
+                System.out.println(sub_protocol + " " + operand1);
+                break;
+            }
+            case "RECLAIM": {
+                System.out.println("case 3 - TODO");
+                System.out.println(sub_protocol + " " + operand1);
+                break;
+            }
+        }
+
+        return null;
+    }
+
     @Override
-    public String sendMessage(String operation, String operand1, Integer operand2) throws RemoteException {
-        String reply = "I'm communicating " + operation + " " + operand1 + " " + operand2;
+    public String sendMessage(String operation, String op1, Integer op2) throws RemoteException {
+        //Parse request
+        sub_protocol = operation;
+        operand1 = op1;
+        replication_degree = op2;
+
+        //Handle request
+        String reply = handleRequest();
+
+        //Send reply
         return reply;
     }
 }
