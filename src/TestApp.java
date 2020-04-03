@@ -33,8 +33,33 @@ public class TestApp {
 
         try {
             Registry registry = LocateRegistry.getRegistry(); //default port 1099
-            Message stub = (Message) registry.lookup(remote_object_name);
-            String response = stub.sendMessage(sub_protocol, operand1, operand2);
+            PeerInterface peer = (PeerInterface) registry.lookup(remote_object_name);
+
+            //Choose the path
+            String response = new String();
+            switch (sub_protocol) {
+                case "BACKUP": {
+                    response = peer.backup(operand1, operand2);
+                    break;
+                }
+                case "RESTORE": {
+                    response = peer.restore(operand1);
+                    break;
+                }
+                case "DELETE": {
+                    response = peer.delete(operand1);
+                    break;
+                }
+                case "RECLAIM": {
+                    response = peer.reclaim(Integer.parseInt(operand1));
+                    break;
+                }
+                case "STATE": {
+                    response = peer.state();
+                    break;
+                }
+            }
+
             System.out.println(response);
         } catch (Exception e) {
             System.err.println("TestApp exception: " + e.toString());

@@ -1,3 +1,8 @@
+import javax.imageio.IIOException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -6,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Peer implements Message{
+public class Peer implements PeerInterface{
 
     private static String sub_protocol;
     private static String operand1;
@@ -14,10 +19,10 @@ public class Peer implements Message{
     private double peer_size;
     private Set<Chunk> chunks = new HashSet<Chunk>();
     //Args
-    private static String protocol_version;
+    private static Double protocol_version;
     private static Integer peer_id;
     private static String acc_point;
-    private static Pair<String, Integer>[] channels = new Pair[3];
+    private static Channel[] channels = new Channel[3];
 
     public static boolean parseArgs(String[] args) {
         //Check the number of arguments given
@@ -28,16 +33,21 @@ public class Peer implements Message{
         }
 
         //Parse protocol version
-        protocol_version = args[0];
+        protocol_version = Double.parseDouble(args[0]);
         //Parse peer id
         peer_id = Integer.parseInt(args[1]);
         //Parse access point
         acc_point = args[2];
         //Parse channels
-        for (int i = 3; i < 6; i++) {
-            String[] MC = args[i].split(":", 2);
-            Pair<String, Integer> MC_pair = new Pair<>(MC[0], Integer.parseInt(MC[1]));
-            channels[i-3] = MC_pair;
+        try {
+            for (int i = 3; i < 6; i++) {
+                Channel MC = new Channel(args[i]);
+                channels[i-3] = MC;
+            }
+        }
+        catch (IOException e) {
+            System.out.println(e.toString());
+            return false;
         }
 
         return true;
@@ -46,7 +56,9 @@ public class Peer implements Message{
     public static void establishCommunication() {
         try {
             Peer peer = new Peer();
-            Message stub = (Message) UnicastRemoteObject.exportObject(peer, 0);
+            System.out.printf("Created peer with id " + peer_id);
+            peer_id++;
+            PeerInterface stub = (PeerInterface) UnicastRemoteObject.exportObject(peer, 0);
 
             // Bind the remote object's stub in the registry
             Registry registry = LocateRegistry.getRegistry();
@@ -59,68 +71,36 @@ public class Peer implements Message{
         }
     }
 
-    public static String handleRequest(){
-        //TODO delete prints - only for debug
-        //TODO write subprotocols - complete switch
-
-        //Choose the path
-        switch (sub_protocol) {
-            case "BACKUP": {
-                System.out.println("case 0 - TODO");
-                System.out.println(sub_protocol + " " + operand1 + " " + replication_degree);
-                System.out.println(protocol_version + " " + peer_id + " " + acc_point);
-                for (int i = 0; i < 3; i++)
-                    System.out.println(channels[i].getFirst() + " " + channels[i].getSecond());
-                break;
-            }
-            case "RESTORE": {
-                System.out.println("case 1 - TODO");
-                System.out.println(sub_protocol + " " + operand1);
-                System.out.println(protocol_version + " " + peer_id + " " + acc_point);
-                for (int i = 0; i < 3; i++)
-                    System.out.println(channels[i].getFirst() + " " + channels[i].getSecond());
-                break;
-            }
-            case "DELETE": {
-                System.out.println("case 2 - TODO");
-                System.out.println(sub_protocol + " " + operand1);
-                System.out.println(protocol_version + " " + peer_id + " " + acc_point);
-                for (int i = 0; i < 3; i++)
-                    System.out.println(channels[i].getFirst() + " " + channels[i].getSecond());
-                break;
-            }
-            case "RECLAIM": {
-                System.out.println("case 3 - TODO");
-                System.out.println(sub_protocol + " " + operand1);
-                System.out.println(protocol_version + " " + peer_id + " " + acc_point);
-                for (int i = 0; i < 3; i++)
-                    System.out.println(channels[i].getFirst() + " " + channels[i].getSecond());
-                break;
-            }
-        }
-
-        return sub_protocol;
-    }
-
-    @Override
-    public String sendMessage(String operation, String op1, Integer op2) throws RemoteException {
-        //Parse request
-        sub_protocol = operation;
-        operand1 = op1;
-        replication_degree = op2;
-
-        //Handle request
-        String reply = handleRequest();
-
-        //Send reply
-        return reply;
-    }
-
     public static void main(String args[]) {
         //Parse args
         if (!parseArgs(args))
             return;
 
         establishCommunication();
+    }
+
+    @Override
+    public String backup(String file, Integer replication_degree) {
+        return "backup";
+    }
+
+    @Override
+    public String restore(String file) {
+        return "restore";
+    }
+
+    @Override
+    public String delete(String file) {
+        return "delete";
+    }
+
+    @Override
+    public String reclaim(Integer max_space) {
+        return "reclaim";
+    }
+
+    @Override
+    public String state() {
+        return "state";
     }
 }
