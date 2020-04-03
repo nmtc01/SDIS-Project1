@@ -69,7 +69,7 @@ public class Peer implements PeerInterface{
     @Override
     public String backup(String file_path, Integer replication_degree) {
         FileInfo file = new FileInfo(file_path, replication_degree);
-
+        //TODO finish this
         return "backup";
     }
 

@@ -29,7 +29,10 @@ public class FileInfo {
             while ((nr_bytes = buffer.read(content)) > 0)
             {
                 byte[] info = Arrays.copyOf(content, nr_bytes);
-                //Chunk chunk = new Chunk(fileId) TODO Finish
+                Chunk chunk = new Chunk(this.fileId, chunck_nr, nr_bytes, this.replication_degree);
+                chunks.add(chunk);
+                chunck_nr++;
+                //TODO finish this
             }
         }
         catch (Exception e)
