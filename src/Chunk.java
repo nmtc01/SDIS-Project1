@@ -1,10 +1,10 @@
 public class Chunk {
     private String file_id;
     private Integer chunk_no;
-    private Float chunk_size; //DONT KNOW IF THEY ARE FINAL OR NOT
+    private Integer chunk_size;
     private int replication_degree;
 
-    public Chunk(String file_id, Integer chunk_no, Float chunk_size, int replication_degree) {
+    public Chunk(String file_id, Integer chunk_no, Integer chunk_size, int replication_degree) {
         this.file_id = file_id;
         this.chunk_no = chunk_no;
         this.chunk_size = chunk_size;
@@ -27,11 +27,11 @@ public class Chunk {
         this.chunk_no = chunk_no;
     }
 
-    public Float getChunk_size() {
+    public Integer getChunk_size() {
         return chunk_size;
     }
 
-    public void setChunk_size(Float chunk_size) {
+    public void setChunk_size(Integer chunk_size) {
         this.chunk_size = chunk_size;
     }
 
