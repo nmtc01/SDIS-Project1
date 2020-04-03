@@ -1,5 +1,7 @@
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 
 public class Channel {
     private String address;
@@ -19,7 +21,20 @@ public class Channel {
 
     }
 
-    public void run() {
+    public void run() throws IOException {
+        MulticastSocket multicastSocket = new MulticastSocket(port);
+        multicastSocket.setTimeToLive(1);
+        multicastSocket.joinGroup(group);
+
+        while (true) {
+
+            //REQUEST
+            byte[] buf = new byte[256];
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            multicastSocket.receive(packet);
+            //MESSAGE
+
+        }
 
     }
 }
