@@ -1,23 +1,10 @@
-import javax.imageio.IIOException;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.UnknownHostException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Peer implements PeerInterface{
 
-    private static String sub_protocol;
-    private static String operand1;
-    private static Integer replication_degree;
-    private double peer_size;
-    private Set<Chunk> chunks = new HashSet<Chunk>();
     //Args
     private static Double protocol_version;
     private static Integer peer_id;
@@ -80,7 +67,9 @@ public class Peer implements PeerInterface{
     }
 
     @Override
-    public String backup(String file, Integer replication_degree) {
+    public String backup(String file_path, Integer replication_degree) {
+        FileInfo file = new FileInfo(file_path, replication_degree);
+
         return "backup";
     }
 
