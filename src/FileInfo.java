@@ -16,7 +16,7 @@ public class FileInfo {
 
     public FileInfo(String filename, Integer replication_degree) {
         this.replication_degree = replication_degree;
-        this.file = new File(filename);
+        this.file = new File("../resources/"+filename);
         this.fileId = generateFileID();
     }
 
@@ -71,7 +71,7 @@ public class FileInfo {
         }
         catch (Exception e)
         {
-            System.err.format("Exception occurred trying to read '%s'.", fileId);
+            System.err.format("Exception occurred trying to read '%s'.", file.getName());
             e.printStackTrace();
         }
     }
