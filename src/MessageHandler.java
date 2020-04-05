@@ -1,10 +1,9 @@
 import java.net.DatagramPacket;
 
-public class MessageHandler {
+public class MessageHandler implements Runnable {
     private DatagramPacket packet;
     private String[] parsedHeader;
     private byte[] body;
-
 
     MessageHandler(DatagramPacket packet) {
         this.packet = packet;

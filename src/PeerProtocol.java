@@ -2,15 +2,17 @@ import java.io.IOException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class PeerProtocol {
+    //Args
     private static Double protocol_version;
     private static Integer peer_id;
     private static String acc_point;
     private static Channel[] channels = new Channel[3];
-    private static Storage storage;
 
     public static void main(String args[]) {
+        System.out.println("Starting Peer Protocol");
         //Parse args
         if (!parseArgs(args))
             return;
@@ -18,13 +20,12 @@ public class PeerProtocol {
         //Create initiator peer
         Peer peer = new Peer(peer_id, channels);
         System.out.println("Created peer with id " + peer_id);
-        peer_id++;
 
-        //Establlish RMI communication between TestApp and Peer
+        //Establish RMI communication between TestApp and Peer
         establishCommunication(peer);
 
         //Initiate storage for initiator peer
-        initiateStorage(0.0);
+        peer.initiateStorage(0.0);
     }
 
     public static boolean parseArgs(String[] args) {
@@ -64,14 +65,10 @@ public class PeerProtocol {
             Registry registry = LocateRegistry.getRegistry();
             registry.bind(acc_point, stub);
 
-            System.err.println("Starting Peer Protocol");
         } catch (Exception e) {
             System.err.println("Peer Protocol exception: " + e.toString());
             e.printStackTrace();
         }
     }
 
-    public static void initiateStorage(Double space) {
-        storage = new Storage(space, peer_id);
-    }
 }
