@@ -16,7 +16,18 @@ public class FileInfo {
 
     public FileInfo(String filename, Integer replication_degree) {
         this.replication_degree = replication_degree;
-        this.file = new File("../resources/"+filename);
+
+        String root = System.getProperty("user.dir");
+        String filepathWin = "\\resources\\" + filename; // in case of Windows
+        String filepathUnix = "/resources/" + filename;
+        String path = root+filepathWin;
+
+        File tmp = new File(path);
+        if (!tmp.exists()) {
+            path = root + filepathUnix;
+            tmp = new File(path);
+        }
+        this.file = tmp;
         this.fileId = generateFileID();
     }
 
@@ -74,5 +85,13 @@ public class FileInfo {
             System.err.format("Exception occurred trying to read '%s'.", file.getName());
             e.printStackTrace();
         }
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public Set<Chunk> getChunks() {
+        return chunks;
     }
 }

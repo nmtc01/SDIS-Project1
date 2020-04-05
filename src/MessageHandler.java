@@ -10,7 +10,6 @@ public class MessageHandler implements Runnable {
     }
 
     public void run() {
-
         parsedHeader = parseHeader(packet);
         body = parseBody(packet);
         String subProtocol = parsedHeader[1];
@@ -63,6 +62,7 @@ public class MessageHandler implements Runnable {
     }
 
     private void managePutChunk() {
+        System.out.println("putchunk arrived");
     }
 
     private String[] parseHeader(DatagramPacket packet) {

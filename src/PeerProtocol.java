@@ -19,7 +19,7 @@ public class PeerProtocol {
 
         //Create initiator peer
         Peer peer = new Peer(peer_id, channels);
-        System.out.println("Created peer with id " + peer_id);
+        System.out.println("Started peer with id " + peer_id);
 
         //Establish RMI communication between TestApp and Peer
         establishCommunication(peer);
@@ -69,6 +69,10 @@ public class PeerProtocol {
             System.err.println("Peer Protocol exception: " + e.toString());
             e.printStackTrace();
         }
+    }
+
+    public static Double getProtocol_version() {
+        return protocol_version;
     }
 
 }
