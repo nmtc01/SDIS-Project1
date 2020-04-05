@@ -9,8 +9,14 @@ public class Storage {
 
         File tmp = new File("PeerProtocol/Peer" + peer_id);
         if (!tmp.exists()) {
-            if (tmp.mkdirs())
+            if (tmp.mkdirs()) {
+                this.directory = tmp;
                 System.out.println("Created folder for Peer" + peer_id);
+            }
         }
+    }
+
+    public void storeFile(int peer_id) {
+        //TODO
     }
 }

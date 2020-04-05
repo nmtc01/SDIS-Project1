@@ -1,3 +1,4 @@
+import java.net.DatagramPacket;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer implements PeerInterface{
@@ -25,9 +26,15 @@ public class Peer implements PeerInterface{
 
     @Override
     public String backup(String file_path, Integer replication_degree) {
+        //File creation
         FileInfo file = new FileInfo(file_path, replication_degree);
         file.prepareChunks();
 
+        //File store
+        this.storage.storeFile(this.peer_id);
+
+        //Create send message
+        //TODO finish with MessageHandler
 
         return "backup";
     }
