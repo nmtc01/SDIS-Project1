@@ -24,24 +24,6 @@ public class Peer implements PeerInterface{
         this.storage = new Storage(space, peer_id);
     }
 
-    public byte[] preparePutchunkMsg(Chunk chunk, Integer replication_degree) {
-        //<Version> PUTCHUNK <SenderId> <FileId> <ChunkNo> <ReplicationDeg> <CRLF><CRLF><Body>
-        Double version = PeerProtocol.getProtocol_version();
-        String fileId = chunk.getFile_id();
-        int chunkNo = chunk.getChunk_no();
-        //TODO check this
-        String headerTerms = "0xD 0xA";
-        String headerString = version + " " + "PUTCHUNK" + " " + this.peer_id + " " + fileId + " " + chunkNo + " "
-                + replication_degree + " " + headerTerms;
-        byte[] header = headerString.getBytes();
-        byte[] content = chunk.getContent();
-        byte[] putchunkMsg = new byte[header.length + content.length];
-        System.arraycopy(header, 0, putchunkMsg, 0, header.length);
-        System.arraycopy(content, 0, putchunkMsg, header.length, content.length);
-
-        return putchunkMsg;
-    }
-
     @Override
     public String backup(String file_path, Integer replication_degree) {
         //File creation
@@ -54,9 +36,10 @@ public class Peer implements PeerInterface{
         //Send PUTCHUNK message for each file's chunk
         //TODO missing encode things
         Iterator<Chunk> chunkIterator = file.getChunks().iterator();
+        MessageFactory messageFactory = new MessageFactory();
         while(chunkIterator.hasNext()) {
             Chunk chunk = chunkIterator.next();
-            byte msg[] = preparePutchunkMsg(chunk, replication_degree);
+            byte msg[] = messageFactory.putChunkMsg(chunk, replication_degree, this.peer_id);
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
             MessageHandler msgHandler = new MessageHandler(sendPacket);
             new Thread(msgHandler).start();

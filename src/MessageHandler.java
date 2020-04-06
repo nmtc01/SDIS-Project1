@@ -2,25 +2,19 @@ import java.net.DatagramPacket;
 
 public class MessageHandler implements Runnable {
     private DatagramPacket packet;
-    private String[] parsedHeader;
-    private byte[] body;
 
     MessageHandler(DatagramPacket packet) {
         this.packet = packet;
     }
 
     public void run() {
-        parsedHeader = parseHeader(packet);
-        body = parseBody(packet);
-        String subProtocol = parsedHeader[1];
-        int senderId = Integer.parseInt(parsedHeader[2]);
-        String fileId = parsedHeader[3];
-        int chunkNo = Integer.parseInt(parsedHeader[4]);
-        int repDeg = Integer.parseInt(parsedHeader[5]);
+        byte[] message = parsePacket(this.packet);
+        String[] p_str = parsePacketStr(this.packet);
+        String subProtocol = p_str[1];
 
         switch (subProtocol) {
             case "PUTCHUNK":
-                managePutChunk();
+                managePutChunk(message);
                 break;
             case "STORED":
                 manageStored();
@@ -42,6 +36,20 @@ public class MessageHandler implements Runnable {
         }
     }
 
+    private byte[] parsePacket(DatagramPacket packet) {
+        return packet.getData();
+    }
+
+    private String[] parsePacketStr(DatagramPacket packet) {
+        String p = new String(packet.getData());
+        String[] pArray = p.trim().split(" ");
+        return pArray;
+    }
+
+    private void managePutChunk(byte[] message) {
+        PeerProtocol.getMDBChannel().send(message);
+    }
+
     private void manageRemoved() {
 
     }
@@ -59,19 +67,5 @@ public class MessageHandler implements Runnable {
     }
 
     private void manageStored() {
-    }
-
-    private void managePutChunk() {
-        System.out.println("putchunk arrived");
-    }
-
-    private String[] parseHeader(DatagramPacket packet) {
-        String header = new String(packet.getData());
-        String[] headerArray = header.trim().split(" ");
-        return headerArray;
-    }
-
-    private byte[] parseBody(DatagramPacket packet) {
-        return body;
     }
 }

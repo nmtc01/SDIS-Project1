@@ -2,11 +2,10 @@ import java.io.IOException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class PeerProtocol {
     //Args
-    private static Double protocol_version;
+    private static String protocol_version;
     private static Integer peer_id;
     private static String acc_point;
     private static Channel[] channels = new Channel[3];
@@ -37,7 +36,11 @@ public class PeerProtocol {
         }
 
         //Parse protocol version
-        protocol_version = Double.parseDouble(args[0]);
+        protocol_version = args[0];
+        if (protocol_version.length() != 3) {
+            System.out.println("Version in format <n>.<m>");
+            return false;
+        }
         //Parse peer id
         peer_id = Integer.parseInt(args[1]);
         //Parse access point
@@ -71,8 +74,19 @@ public class PeerProtocol {
         }
     }
 
-    public static Double getProtocol_version() {
+    public static String getProtocol_version() {
         return protocol_version;
     }
 
+    public static Channel getMCChannel(){
+        return channels[0];
+    }
+
+    public static Channel getMDBChannel() {
+        return channels[1];
+    }
+
+    public static Channel getMDRChannel() {
+        return channels[2];
+    }
 }

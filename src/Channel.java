@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
@@ -18,7 +19,15 @@ public class Channel implements Runnable {
     //TODO finish this
 
     public void send(byte[] msg) {
-
+        try {
+            DatagramSocket senderSocket = new DatagramSocket();
+            DatagramPacket packet = new DatagramPacket(msg, msg.length);
+            senderSocket.send(packet);
+            System.out.println("Sent packet");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void run() {
