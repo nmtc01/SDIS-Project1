@@ -87,11 +87,15 @@ public class FileInfo {
         }
     }
 
+    public Set<Chunk> getChunks() {
+        return chunks;
+    }
+
     public String getFileId() {
         return fileId;
     }
 
-    public Set<Chunk> getChunks() {
-        return chunks;
+    public File getFile() {
+        return this.file;
     }
 }

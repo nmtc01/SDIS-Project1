@@ -1,7 +1,5 @@
-import java.lang.reflect.Array;
 import java.net.DatagramPacket;
 import java.util.Iterator;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer implements PeerInterface{
 
@@ -51,7 +49,7 @@ public class Peer implements PeerInterface{
         file.prepareChunks();
 
         //File store
-        this.storage.storeFile(this.peer_id);
+        this.storage.storeFile(file, this.peer_id);
 
         //Send PUTCHUNK message for each file's chunk
         //TODO missing encode things
