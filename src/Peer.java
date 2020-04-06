@@ -1,6 +1,5 @@
 import java.net.DatagramPacket;
 import java.util.Iterator;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer implements PeerInterface{
@@ -8,28 +7,22 @@ public class Peer implements PeerInterface{
     private Integer peer_id;
     private Channel[] channels;
     private Storage storage;
-    private ScheduledThreadPoolExecutor threadExecutor;
 
     public Peer(Integer peer_id, Channel[] channels) {
         this.peer_id = peer_id;
         this.channels = channels;
-        this.threadExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(10);
         executeChannels();
     }
 
     public void executeChannels() {
         //Initiate channels' threads
         for (int i = 0; i < 3; i++) {
-            threadExecutor.execute(channels[i]);
+            PeerProtocol.getThreadExecutor().execute(channels[i]);
         }
     }
 
     public void initiateStorage(Double space) {
         this.storage = new Storage(space, peer_id);
-    }
-
-    public ScheduledThreadPoolExecutor getThreadExecutor() {
-        return threadExecutor;
     }
 
     public Channel getMCChannel(){
@@ -66,7 +59,7 @@ public class Peer implements PeerInterface{
             byte msg[] = messageFactory.putChunkMsg(chunk, replication_degree, this.peer_id);
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
             SendMessagesManager msgHandler = new SendMessagesManager(sendPacket);
-            threadExecutor.execute(msgHandler);
+            PeerProtocol.getThreadExecutor().execute(msgHandler);
         }
 
         //TODO FINISH

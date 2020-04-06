@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class PeerProtocol {
     //Args
@@ -10,6 +12,7 @@ public class PeerProtocol {
     private static String acc_point;
     private static Channel[] channels = new Channel[3];
     private static Peer currentPeer;
+    private static ScheduledThreadPoolExecutor threadExecutor;
 
     public static void main(String args[]) {
         System.out.println("Starting Peer Protocol");
@@ -17,10 +20,12 @@ public class PeerProtocol {
         if (!parseArgs(args))
             return;
 
+        //Create executor
+        threadExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(10);
+
         //Create initiator peer
         currentPeer = new Peer(peer_id, channels);
         System.out.println("Started peer with id " + peer_id);
-        peer_id++;
 
         //Establish RMI communication between TestApp and Peer
         establishCommunication(currentPeer);
@@ -83,5 +88,9 @@ public class PeerProtocol {
 
     public static Peer getCurrentPeer() {
         return currentPeer;
+    }
+
+    public static ScheduledThreadPoolExecutor getThreadExecutor() {
+        return threadExecutor;
     }
 }

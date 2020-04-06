@@ -35,11 +35,12 @@ public class Channel implements Runnable {
 
             while (true) {
                 //REQUEST
-                byte[] buf = new byte[256];
+                byte[] buf = new byte[64000];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 receiverSocket.receive(packet);
                 //MESSAGE
-                PeerProtocol.getCurrentPeer().getThreadExecutor().execute(new ReceivedMessagesManager(packet));
+                ReceivedMessagesManager manager = new ReceivedMessagesManager(packet);
+                PeerProtocol.getThreadExecutor().execute(manager);
             }
         }
         catch (IOException e) {

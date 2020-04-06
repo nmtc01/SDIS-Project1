@@ -1,12 +1,11 @@
 import java.io.*;
-import java.util.Scanner;
 
 public class Storage {
-    private double free_sapce;
+    private double free_space;
     private File directory;
 
     public Storage(double space, int peer_id){
-        this.free_sapce = space;
+        this.free_space = space;
 
         String root = System.getProperty("user.dir");
         String filepathWin = "\\PeerProtocol\\Peer" + peer_id; // in case of Windows
@@ -77,6 +76,42 @@ public class Storage {
     }
 
     public void storeChunk(Chunk chunk, int peer_id) {
+        String fileFolderUnix = directory.getPath()+ "/file" + chunk.getFile_id();
+        String fileFolderWin = directory.getPath()+ "\\file" + chunk.getFile_id();
 
+        File tmpUnix = new File(fileFolderUnix);
+        File tmpWin = new File(fileFolderWin);
+        if (!tmpUnix.exists()) {
+            if (tmpUnix.mkdirs()) {
+                exportChunk(tmpUnix, chunk, true);
+                System.out.println("Stored chunk inside Peer" + peer_id);
+            }
+            else if (!tmpWin.exists()) {
+                if (tmpWin.mkdirs()) {
+                    exportChunk(tmpWin, chunk, false);
+                    System.out.println("Stored file inside Peer" + peer_id);
+                }
+            }
+        }
+    }
+
+    public void exportChunk(File directory, Chunk chunk, boolean isUnix) {
+        try {
+            File fileOut;
+            if (isUnix) {
+                fileOut = new File(directory.getPath() + "/" + "chunk" + chunk.getChunk_no());
+            }
+            else fileOut = new File(directory.getPath() + "\\" + "chunk" + chunk.getChunk_no());
+
+            byte[] input = chunk.getContent();
+
+            //WRITE
+            FileOutputStream myWriter = new FileOutputStream(fileOut);
+            myWriter.write(input);
+            myWriter.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

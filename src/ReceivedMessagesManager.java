@@ -10,6 +10,7 @@ public class ReceivedMessagesManager implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("run");
         String version = header[0];
         String subProtocol = header[1];
         int senderId = Integer.parseInt(header[2]);
@@ -50,9 +51,10 @@ public class ReceivedMessagesManager implements Runnable {
     }
 
     private void managePutChunk(String version, int senderId, String fileId, int chunkNo, int repDeg, byte[] body) {
+        //TODO run not working
         Chunk chunk = new Chunk(fileId, chunkNo, body.length, repDeg, body);
         PeerProtocol.getCurrentPeer().getStorage().storeChunk(chunk, senderId);
-        //Finish
+        //TODO send confirmation message
     }
 
     private void manageRemoved() {
