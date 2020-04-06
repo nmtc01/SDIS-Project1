@@ -16,8 +16,6 @@ public class Channel implements Runnable {
         this.group = InetAddress.getByName(this.address);
     }
 
-    //TODO finish this
-
     public void send(byte[] msg) {
         try {
             DatagramSocket senderSocket = new DatagramSocket();

@@ -25,6 +25,7 @@ public class PeerProtocol {
 
         //Initiate storage for initiator peer
         peer.initiateStorage(0.0);
+
     }
 
     public static boolean parseArgs(String[] args) {
