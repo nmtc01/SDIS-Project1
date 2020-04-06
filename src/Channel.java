@@ -19,7 +19,7 @@ public class Channel implements Runnable {
     public void send(byte[] msg) {
         try {
             DatagramSocket senderSocket = new DatagramSocket();
-            DatagramPacket packet = new DatagramPacket(msg, msg.length, group, port);
+            DatagramPacket packet = new DatagramPacket(msg, msg.length, this.group, this.port);
             System.out.println("enviou1");
             senderSocket.send(packet);
             System.out.println("enviou2");
@@ -31,9 +31,9 @@ public class Channel implements Runnable {
 
     public void run() {
         try {
-            MulticastSocket receiverSocket = new MulticastSocket(port);
+            MulticastSocket receiverSocket = new MulticastSocket(this.port);
             receiverSocket.setTimeToLive(1);
-            receiverSocket.joinGroup(group);
+            receiverSocket.joinGroup(this.group);
             byte[] buf = new byte[64000];
 
             while (true) {

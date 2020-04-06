@@ -48,7 +48,6 @@ public class SendMessagesManager implements Runnable {
     }
 
     private void managePutChunk(byte[] message) {
-        System.out.println(new String(message));
         PeerProtocol.getPeer().getMDBChannel().send(message);
     }
 
