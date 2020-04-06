@@ -75,4 +75,8 @@ public class Storage {
             e.printStackTrace();
         }
     }
+
+    public void storeChunk(Chunk chunk, int peer_id) {
+
+    }
 }

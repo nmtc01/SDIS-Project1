@@ -20,6 +20,7 @@ public class PeerProtocol {
         //Create initiator peer
         currentPeer = new Peer(peer_id, channels);
         System.out.println("Started peer with id " + peer_id);
+        peer_id++;
 
         //Establish RMI communication between TestApp and Peer
         establishCommunication(currentPeer);

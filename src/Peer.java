@@ -44,6 +44,10 @@ public class Peer implements PeerInterface{
         return this.channels[2];
     }
 
+    public Storage getStorage() {
+        return storage;
+    }
+
     @Override
     public String backup(String file_path, Integer replication_degree) {
         //File creation
@@ -61,7 +65,7 @@ public class Peer implements PeerInterface{
             Chunk chunk = chunkIterator.next();
             byte msg[] = messageFactory.putChunkMsg(chunk, replication_degree, this.peer_id);
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
-            MessageHandler msgHandler = new MessageHandler(sendPacket);
+            SendMessagesManager msgHandler = new SendMessagesManager(sendPacket);
             threadExecutor.execute(msgHandler);
         }
 

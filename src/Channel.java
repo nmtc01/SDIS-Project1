@@ -39,7 +39,7 @@ public class Channel implements Runnable {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 receiverSocket.receive(packet);
                 //MESSAGE
-                System.out.println(packet.getData());
+                PeerProtocol.getCurrentPeer().getThreadExecutor().execute(new ReceivedMessagesManager(packet));
             }
         }
         catch (IOException e) {

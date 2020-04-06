@@ -1,12 +1,13 @@
 import java.net.DatagramPacket;
 
-public class MessageHandler implements Runnable {
+public class SendMessagesManager implements Runnable {
     private DatagramPacket packet;
 
-    MessageHandler(DatagramPacket packet) {
+    SendMessagesManager(DatagramPacket packet) {
         this.packet = packet;
     }
 
+    @Override
     public void run() {
         byte[] message = parsePacket(this.packet);
         String[] p_str = parsePacketStr(this.packet);
