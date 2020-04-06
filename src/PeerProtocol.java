@@ -9,6 +9,7 @@ public class PeerProtocol {
     private static Integer peer_id;
     private static String acc_point;
     private static Channel[] channels = new Channel[3];
+    private static Peer currentPeer;
 
     public static void main(String args[]) {
         System.out.println("Starting Peer Protocol");
@@ -17,14 +18,14 @@ public class PeerProtocol {
             return;
 
         //Create initiator peer
-        Peer peer = new Peer(peer_id, channels);
+        currentPeer = new Peer(peer_id, channels);
         System.out.println("Started peer with id " + peer_id);
 
         //Establish RMI communication between TestApp and Peer
-        establishCommunication(peer);
+        establishCommunication(currentPeer);
 
         //Initiate storage for initiator peer
-        peer.initiateStorage(0.0);
+        currentPeer.initiateStorage(0.0);
 
     }
 
@@ -79,15 +80,7 @@ public class PeerProtocol {
         return protocol_version;
     }
 
-    public static Channel getMCChannel(){
-        return channels[0];
-    }
-
-    public static Channel getMDBChannel() {
-        return channels[1];
-    }
-
-    public static Channel getMDRChannel() {
-        return channels[2];
+    public static Peer getCurrentPeer() {
+        return currentPeer;
     }
 }

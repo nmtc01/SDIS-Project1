@@ -47,7 +47,7 @@ public class MessageHandler implements Runnable {
     }
 
     private void managePutChunk(byte[] message) {
-        PeerProtocol.getMDBChannel().send(message);
+        PeerProtocol.getCurrentPeer().getMDBChannel().send(message);
     }
 
     private void manageRemoved() {

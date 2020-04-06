@@ -1,5 +1,6 @@
 import java.net.DatagramPacket;
 import java.util.Iterator;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer implements PeerInterface{
@@ -12,7 +13,7 @@ public class Peer implements PeerInterface{
     public Peer(Integer peer_id, Channel[] channels) {
         this.peer_id = peer_id;
         this.channels = channels;
-        this.threadExecutor = new ScheduledThreadPoolExecutor(10);
+        this.threadExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(10);
         executeChannels();
     }
 
@@ -29,6 +30,18 @@ public class Peer implements PeerInterface{
 
     public ScheduledThreadPoolExecutor getThreadExecutor() {
         return threadExecutor;
+    }
+
+    public Channel getMCChannel(){
+        return this.channels[0];
+    }
+
+    public Channel getMDBChannel() {
+        return this.channels[1];
+    }
+
+    public Channel getMDRChannel() {
+        return this.channels[2];
     }
 
     @Override
