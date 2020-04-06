@@ -53,7 +53,7 @@ public class ReceivedMessagesManager implements Runnable {
     private void managePutChunk(String version, int senderId, String fileId, int chunkNo, int repDeg, byte[] body) {
         //TODO run not working
         Chunk chunk = new Chunk(fileId, chunkNo, body.length, repDeg, body);
-        PeerProtocol.getCurrentPeer().getStorage().storeChunk(chunk, senderId);
+        PeerProtocol.getPeer().getStorage().storeChunk(chunk, senderId);
         //TODO send confirmation message
     }
 

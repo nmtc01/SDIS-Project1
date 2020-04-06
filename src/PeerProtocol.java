@@ -11,7 +11,7 @@ public class PeerProtocol {
     private static Integer peer_id;
     private static String acc_point;
     private static Channel[] channels = new Channel[3];
-    private static Peer currentPeer;
+    private static Peer peer;
     private static ScheduledThreadPoolExecutor threadExecutor;
 
     public static void main(String args[]) {
@@ -24,14 +24,14 @@ public class PeerProtocol {
         threadExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(10);
 
         //Create initiator peer
-        currentPeer = new Peer(peer_id, channels);
+        peer = new Peer(peer_id, channels);
         System.out.println("Started peer with id " + peer_id);
 
         //Establish RMI communication between TestApp and Peer
-        establishCommunication(currentPeer);
+        establishCommunication(peer);
 
         //Initiate storage for initiator peer
-        currentPeer.initiateStorage(0.0);
+        peer.initiateStorage(0.0);
 
     }
 
@@ -86,8 +86,8 @@ public class PeerProtocol {
         return protocol_version;
     }
 
-    public static Peer getCurrentPeer() {
-        return currentPeer;
+    public static Peer getPeer() {
+        return peer;
     }
 
     public static ScheduledThreadPoolExecutor getThreadExecutor() {

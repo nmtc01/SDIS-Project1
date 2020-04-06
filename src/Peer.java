@@ -41,6 +41,10 @@ public class Peer implements PeerInterface{
         return storage;
     }
 
+    public Integer getPeer_id(){
+        return getPeer_id();
+    }
+
     @Override
     public String backup(String file_path, Integer replication_degree) {
         //File creation
