@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
@@ -15,6 +14,7 @@ public class Channel implements Runnable {
         this.address = MC[0];
         this.port = Integer.parseInt(MC[1]);
         this.group = InetAddress.getByName(this.address);
+        this.receiverSocket = new MulticastSocket(this.port);
     }
 
     public void send(byte[] msg) {
@@ -31,7 +31,6 @@ public class Channel implements Runnable {
 
     public void run() {
         try {
-            receiverSocket = new MulticastSocket(this.port);
             receiverSocket.joinGroup(this.group);
             byte[] buf = new byte[65000];
 
