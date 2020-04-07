@@ -23,6 +23,7 @@ public class Channel implements Runnable {
             System.out.println("estou a enviar - group: " + this.group + ", port: " + this.port);
             senderSocket.send(packet);
             System.out.println("enviei - group: " + this.group + ", port: " + this.port);
+            senderSocket.close();
         }
         catch (IOException e) {
             e.printStackTrace();
