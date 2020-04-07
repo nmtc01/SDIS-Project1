@@ -1,6 +1,5 @@
 import java.net.DatagramPacket;
 import java.util.Iterator;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer implements PeerInterface{
 

@@ -15,6 +15,7 @@ public class Channel implements Runnable {
         this.port = Integer.parseInt(MC[1]);
         this.group = InetAddress.getByName(this.address);
         this.receiverSocket = new MulticastSocket(this.port);
+        this.receiverSocket.joinGroup(this.group);
     }
 
     public void send(byte[] msg) {
@@ -31,13 +32,12 @@ public class Channel implements Runnable {
 
     public void run() {
         try {
-            receiverSocket.joinGroup(this.group);
             byte[] buf = new byte[65000];
 
             while (true) {
                 //REQUEST
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                System.out.println("estou a receber - group: " + this.group + ", port: " + this.port);
+                System.out.println("estou pronto para receber - group: " + this.group + ", port: " + this.port);
                 receiverSocket.receive(packet);
                 System.out.println("Received message - peer" + PeerProtocol.getPeer().getPeer_id());
                 //MESSAGE
