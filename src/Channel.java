@@ -8,6 +8,7 @@ public class Channel implements Runnable {
     private String address;
     private Integer port;
     private InetAddress group;
+    private MulticastSocket receiverSocket;
 
     public Channel(String full) throws IOException {
         String[] MC = full.split(":", 2);
@@ -18,12 +19,10 @@ public class Channel implements Runnable {
 
     public void send(byte[] msg) {
         try {
-            DatagramSocket senderSocket = new DatagramSocket();
             DatagramPacket packet = new DatagramPacket(msg, msg.length, this.group, this.port);
             System.out.println("estou a enviar - group: " + this.group + ", port: " + this.port);
-            senderSocket.send(packet);
+            receiverSocket.send(packet);
             System.out.println("enviei - group: " + this.group + ", port: " + this.port);
-            senderSocket.close();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -32,7 +31,7 @@ public class Channel implements Runnable {
 
     public void run() {
         try {
-            MulticastSocket receiverSocket = new MulticastSocket(this.port);
+            receiverSocket = new MulticastSocket(this.port);
             receiverSocket.joinGroup(this.group);
             byte[] buf = new byte[65000];
 
