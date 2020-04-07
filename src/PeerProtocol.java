@@ -10,7 +10,6 @@ public class PeerProtocol {
     private static String protocol_version;
     private static Integer peer_id;
     private static String acc_point;
-    private static Channel[] channels = new Channel[3];
     private static Peer peer;
     private static ScheduledThreadPoolExecutor threadExecutor;
 
@@ -19,6 +18,19 @@ public class PeerProtocol {
         //Parse args
         if (!parseArgs(args))
             return;
+
+        //Parse channels
+        Channel[] channels = new Channel[3];
+        try {
+            for (int i = 3; i < 6; i++) {
+                Channel MC = new Channel(args[i]);
+                channels[i-3] = MC;
+            }
+        }
+        catch (IOException e) {
+            System.out.println(e.toString());
+            return;
+        }
 
         //Create executor
         threadExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(10);
@@ -53,17 +65,6 @@ public class PeerProtocol {
         peer_id = Integer.parseInt(args[1]);
         //Parse access point
         acc_point = args[2];
-        //Parse channels
-        try {
-            for (int i = 3; i < 6; i++) {
-                Channel MC = new Channel(args[i]);
-                channels[i-3] = MC;
-            }
-        }
-        catch (IOException e) {
-            System.out.println(e.toString());
-            return false;
-        }
 
         return true;
     }

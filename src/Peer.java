@@ -41,7 +41,7 @@ public class Peer implements PeerInterface{
     }
 
     public Integer getPeer_id(){
-        return getPeer_id();
+        return this.peer_id;
     }
 
     @Override
