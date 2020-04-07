@@ -20,9 +20,9 @@ public class Channel implements Runnable {
         try {
             DatagramSocket senderSocket = new DatagramSocket();
             DatagramPacket packet = new DatagramPacket(msg, msg.length, this.group, this.port);
-            System.out.println("enviou1");
+            System.out.println("estou a enviar - group: " + this.group + ", port: " + this.port);
             senderSocket.send(packet);
-            System.out.println("enviou2");
+            System.out.println("enviei - group: " + this.group + ", port: " + this.port);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -32,14 +32,13 @@ public class Channel implements Runnable {
     public void run() {
         try {
             MulticastSocket receiverSocket = new MulticastSocket(this.port);
-            receiverSocket.setTimeToLive(1);
             receiverSocket.joinGroup(this.group);
             byte[] buf = new byte[64000];
 
             while (true) {
                 //REQUEST
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                System.out.println("recebi 1");
+                System.out.println("estou a receber - group: " + this.group + ", port: " + this.port);
                 receiverSocket.receive(packet);
                 System.out.println("Received message - peer" + PeerProtocol.getPeer().getPeer_id());
                 //MESSAGE

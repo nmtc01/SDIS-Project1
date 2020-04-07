@@ -17,7 +17,7 @@ public class Peer implements PeerInterface{
     public void executeChannels() {
         //Initiate channels' threads
         for (int i = 0; i < 3; i++) {
-            PeerProtocol.getThreadExecutor().execute(channels[i]);
+            PeerProtocol.getThreadExecutor().execute(channels[1]);
         }
     }
 
