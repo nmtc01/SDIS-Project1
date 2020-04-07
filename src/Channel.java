@@ -34,7 +34,7 @@ public class Channel implements Runnable {
         try {
             MulticastSocket receiverSocket = new MulticastSocket(this.port);
             receiverSocket.joinGroup(this.group);
-            byte[] buf = new byte[64000];
+            byte[] buf = new byte[65000];
 
             while (true) {
                 //REQUEST

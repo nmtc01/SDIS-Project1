@@ -3,6 +3,7 @@ import java.io.*;
 public class Storage {
     private double free_space;
     private File directory;
+    private boolean isUnix = true;
 
     public Storage(double space, int peer_id){
         this.free_space = space;
@@ -15,46 +16,44 @@ public class Storage {
 
         File tmpUnix = new File(pathUnix);
         File tmpWin= new File(pathWin);
+        this.directory = tmpUnix;
+
         if (!tmpUnix.exists()) {
             if (tmpUnix.mkdirs()) {
-                this.directory = tmpUnix;
+                this.isUnix = true;
                 System.out.println("Created folder for Peer" + peer_id);
             }
-            else if (!tmpWin.exists()) {
-                if (tmpWin.mkdirs()) {
-                    this.directory = tmpWin;
-                    System.out.println("Created folder for Peer" + peer_id);
-                }
+            else {
+                this.isUnix = false;
+                this.directory = tmpWin;
+                if (!tmpWin.exists())
+                    if (tmpWin.mkdirs())
+                        System.out.println("Created folder for Peer" + peer_id);
             }
         }
     }
 
     public void storeFile(FileInfo file, int peer_id) {
-        String fileFolderUnix = directory.getPath()+ "/file" + file.getFileId();
-        String fileFolderWin = directory.getPath()+ "\\file" + file.getFileId();
+        String fileFolder;
+        if (this.isUnix)
+            fileFolder = directory.getPath()+ "/file" + file.getFileId();
+        else fileFolder = directory.getPath()+ "\\file" + file.getFileId();
 
-        File tmpUnix = new File(fileFolderUnix);
-        File tmpWin = new File(fileFolderWin);
-        if (!tmpUnix.exists()) {
-            if (tmpUnix.mkdirs()) {
+        File tmp = new File(fileFolder);
+        if (!tmp.exists()) {
+            if (tmp.mkdirs()) {
                 System.out.println("Created folder for file " + file.getFile().getName() + " inside Peer" + peer_id);
-                exportFile(tmpUnix, file.getFile(), true);
+                exportFile(tmp, file.getFile());
                 System.out.println("Stored file " + file.getFile().getName() + " inside Peer" + peer_id);
             }
-            else if (!tmpWin.exists()) {
-                if (tmpWin.mkdirs()) {
-                    System.out.println("Created folder for file " + file.getFile().getName() + " inside Peer" + peer_id);
-                    exportFile(tmpWin, file.getFile(), false);
-                    System.out.println("Stored file " + file.getFile().getName() + " inside Peer" + peer_id);
-                }
-            }
         }
+        else exportFile(tmp, file.getFile());
     }
 
-    public void exportFile(File directory, File fileIn, boolean isUnix) {
+    public void exportFile(File directory, File fileIn) {
         try {
             File fileOut;
-            if (isUnix) {
+            if (this.isUnix) {
                 fileOut = new File(directory.getPath() + "/" + fileIn.getName());
             }
             else fileOut = new File(directory.getPath() + "\\" + fileIn.getName());
@@ -76,29 +75,25 @@ public class Storage {
     }
 
     public void storeChunk(Chunk chunk, int peer_id) {
-        String fileFolderUnix = directory.getPath()+ "/file" + chunk.getFile_id();
-        String fileFolderWin = directory.getPath()+ "\\file" + chunk.getFile_id();
+        String fileFolder;
+        if (this.isUnix)
+            fileFolder = directory.getPath()+ "/file" + chunk.getFile_id();
+        else fileFolder = directory.getPath()+ "\\file" + chunk.getFile_id();
 
-        File tmpUnix = new File(fileFolderUnix);
-        File tmpWin = new File(fileFolderWin);
-        if (!tmpUnix.exists()) {
-            if (tmpUnix.mkdirs()) {
-                exportChunk(tmpUnix, chunk, true);
+        File tmp = new File(fileFolder);
+        if (!tmp.exists()) {
+            if (tmp.mkdirs()) {
+                exportChunk(tmp, chunk);
                 System.out.println("Stored chunk inside Peer" + peer_id);
             }
-            else if (!tmpWin.exists()) {
-                if (tmpWin.mkdirs()) {
-                    exportChunk(tmpWin, chunk, false);
-                    System.out.println("Stored file inside Peer" + peer_id);
-                }
-            }
         }
+        else exportChunk(tmp, chunk);
     }
 
-    public void exportChunk(File directory, Chunk chunk, boolean isUnix) {
+    public void exportChunk(File directory, Chunk chunk) {
         try {
             File fileOut;
-            if (isUnix) {
+            if (this.isUnix) {
                 fileOut = new File(directory.getPath() + "/" + "chunk" + chunk.getChunk_no());
             }
             else fileOut = new File(directory.getPath() + "\\" + "chunk" + chunk.getChunk_no());
