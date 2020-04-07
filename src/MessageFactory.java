@@ -9,14 +9,17 @@ public class MessageFactory {
         //TODO limit chunk size
         int chunkNo = chunk.getChunk_no();
         //TODO check this
-        String headerTerms = "0xD0xA";
+        byte[] headerTerms = new byte[2];
+        headerTerms[0] = 0xD;
+        headerTerms[1] = 0xA;
         String headerString = version + " " + "PUTCHUNK" + " " + peer_id + " " + fileId + " " + chunkNo + " "
-                + replication_degree + " " + headerTerms;
+                + replication_degree + " ";
         byte[] header = headerString.getBytes();
         byte[] content = chunk.getContent();
-        byte[] putchunkMsg = new byte[header.length + content.length];
+        byte[] putchunkMsg = new byte[header.length + headerTerms.length + content.length];
         System.arraycopy(header, 0, putchunkMsg, 0, header.length);
-        System.arraycopy(content, 0, putchunkMsg, header.length, content.length);
+        System.arraycopy(headerTerms, 0, putchunkMsg, header.length, headerTerms.length);
+        System.arraycopy(content, 0, putchunkMsg, header.length+headerTerms.length, content.length);
 
         return putchunkMsg;
     }
