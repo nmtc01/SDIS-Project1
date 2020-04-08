@@ -129,12 +129,11 @@ public class Storage {
         }
         else {
             this.chunks_current_degrees.put(key, 1);
-            System.out.println(this.chunks_current_degrees.get(key));
         }
     }
 
     public int getChunkCurrentDegree(String chunkKey) {
-        if (this.chunks_current_degrees.contains(chunkKey))
+        if (this.chunks_current_degrees.containsKey(chunkKey))
             return this.chunks_current_degrees.get(chunkKey);
         else return 0;
     }
