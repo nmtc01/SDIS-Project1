@@ -16,7 +16,8 @@ public class Peer implements PeerInterface{
     public void executeChannels() {
         //Initiate channels' threads
         for (int i = 0; i < 3; i++) {
-            PeerProtocol.getThreadExecutor().execute(channels[i]);
+            //PeerProtocol.getThreadExecutor().execute(channels[i]);
+            new Thread(channels[i]).start();
         }
     }
 
@@ -61,9 +62,8 @@ public class Peer implements PeerInterface{
             Chunk chunk = chunkIterator.next();
             byte msg[] = messageFactory.putChunkMsg(chunk, replication_degree, this.peer_id);
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+            PeerProtocol.getThreadExecutor().execute(new SendMessagesManager(sendPacket));
             System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
-            SendMessagesManager msgHandler = new SendMessagesManager(sendPacket);
-            PeerProtocol.getThreadExecutor().execute(msgHandler);
             try {
                 Thread.sleep(500);
             }

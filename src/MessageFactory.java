@@ -14,19 +14,13 @@ public class MessageFactory {
         String fileId = chunk.getFile_id();
         //TODO limit chunk size
         int chunkNo = chunk.getChunk_no();
-        //TODO check this
-        byte[] headerTerms = new byte[2];
-        headerTerms[0] = 0xD;
-        headerTerms[1] = 0xA;
-        String headerString = version + " " + "PUTCHUNK" + " " + peer_id + " " + fileId + " " + chunkNo + " "
-                + replication_degree + " ";
-        this.messageString = headerString;
-        byte[] header = headerString.getBytes();
+        this.messageString = version + " " + "PUTCHUNK" + " " + peer_id + " " + fileId + " " + chunkNo + " " + replication_degree;
+        String headerTerms = this.messageString + " \r\n\r\n";
+        byte[] header = headerTerms.getBytes();
         byte[] content = chunk.getContent();
-        byte[] putchunkMsg = new byte[header.length + headerTerms.length + content.length];
+        byte[] putchunkMsg = new byte[header.length + content.length];
         System.arraycopy(header, 0, putchunkMsg, 0, header.length);
-        System.arraycopy(headerTerms, 0, putchunkMsg, header.length, headerTerms.length);
-        System.arraycopy(content, 0, putchunkMsg, header.length+headerTerms.length, content.length);
+        System.arraycopy(content, 0, putchunkMsg, header.length, content.length);
 
         return putchunkMsg;
     }
@@ -37,9 +31,8 @@ public class MessageFactory {
         byte[] headerTerms = new byte[2];
         headerTerms[0] = 0xD;
         headerTerms[1] = 0xA;
-        String headerString = version + " " + "STORED" + " " + senderId + " " + fileId + " " + chunkNo + " "
-                + " ";
-        this.messageString = headerString;
+        this.messageString = version + " " + "STORED" + " " + senderId + " " + fileId + " " + chunkNo;
+        String headerString = this.messageString + " \r\n\r\n";
         byte[] header = headerString.getBytes();
         byte[] putchunkMsg = new byte[header.length + headerTerms.length];
         System.arraycopy(header, 0, putchunkMsg, 0, header.length);
