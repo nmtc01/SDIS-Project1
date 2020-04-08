@@ -38,7 +38,7 @@ public class Channel implements Runnable {
                 receiverSocket.receive(packet);
                 //MESSAGE
                 ReceivedMessagesManager manager = new ReceivedMessagesManager(packet);
-                PeerProtocol.getThreadExecutor().execute(manager);
+                new Thread(manager).start();
             }
         }
         catch (IOException e) {

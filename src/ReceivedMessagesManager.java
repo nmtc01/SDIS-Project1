@@ -18,14 +18,16 @@ public class ReceivedMessagesManager implements Runnable {
         int senderId = Integer.parseInt(header[2]);
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
-        int repDeg = Integer.parseInt(header[5]);
+        int repDeg = 0;
+        if (header.length == 6)
+            repDeg = Integer.parseInt(header[5]);
 
         switch (subProtocol) {
             case "PUTCHUNK":
                 managePutChunk(version, senderId, fileId, chunkNo, repDeg, body);
                 break;
             case "STORED":
-                manageStored(version, senderId, fileId, chunkNo, repDeg);
+                manageStored(version, senderId, fileId, chunkNo);
                 break;
             case "DELETE":
                 manageDelete();
@@ -66,10 +68,10 @@ public class ReceivedMessagesManager implements Runnable {
         PeerProtocol.getThreadExecutor().schedule(receivedPutChunk, random.nextInt(401), TimeUnit.MILLISECONDS);
     }
 
-    private void manageStored(String version, int senderId, String fileId, int chunkNo, int repDeg) {
+    private void manageStored(String version, int senderId, String fileId, int chunkNo) {
         if (senderId == PeerProtocol.getPeer().getPeer_id())
             return;
-        System.out.printf("Received message: %s STORED %d %s %d %d\n", version, senderId, fileId, chunkNo, repDeg);
+        System.out.printf("Received message: %s STORED %d %s %d\n", version, senderId, fileId, chunkNo);
     }
 
     private void manageRemoved() {
