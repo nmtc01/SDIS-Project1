@@ -96,7 +96,7 @@ public class Storage {
         }
     }
 
-    public void storeChunk(Chunk chunk, int peer_id) {
+    public void storeChunk(Chunk chunk) {
         //Store on system
         String fileFolder;
         if (this.isUnix)
@@ -107,7 +107,6 @@ public class Storage {
         if (!tmp.exists()) {
             if (tmp.mkdirs()) {
                 exportChunk(tmp, chunk);
-                System.out.println("Stored chunk inside Peer" + peer_id);
             }
         }
         else exportChunk(tmp, chunk);
