@@ -114,13 +114,8 @@ public class Storage {
 
         //Store on hashmap and list
         String key = chunk.getFile_id()+"-"+chunk.getChunk_no();
-        if (this.chunks_current_degrees.containsKey(key)) {
-            this.chunks_current_degrees.replace(key, this.chunks_current_degrees.get(key)+1);
-        }
-        else {
-            this.chunks_current_degrees.put(key, 1);
-            this.storedChunks.add(chunk);
-        }
+        incrementChunkOccurences(key);
+        this.storedChunks.add(chunk);
     }
 
     public void exportChunk(File directory, Chunk chunk) {
@@ -140,6 +135,16 @@ public class Storage {
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void incrementChunkOccurences(String key) {
+        if (this.chunks_current_degrees.containsKey(key)) {
+            this.chunks_current_degrees.replace(key, this.chunks_current_degrees.get(key)+1);
+        }
+        else {
+            this.chunks_current_degrees.put(key, 1);
+            System.out.println(this.chunks_current_degrees.get(key));
         }
     }
 

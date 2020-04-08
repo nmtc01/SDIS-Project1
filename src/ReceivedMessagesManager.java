@@ -64,13 +64,17 @@ public class ReceivedMessagesManager implements Runnable {
             return;
         System.out.printf("Received message: %s PUTCHUNK %d %s %d %d\n", version, senderId, fileId, chunkNo, repDeg);
         Random random = new Random();
+        int random_value = random.nextInt(401);
         ReceivedPutChunk receivedPutChunk = new ReceivedPutChunk(version, fileId, chunkNo, repDeg, body);
-        PeerProtocol.getThreadExecutor().schedule(receivedPutChunk, random.nextInt(401), TimeUnit.MILLISECONDS);
+        PeerProtocol.getThreadExecutor().schedule(receivedPutChunk, random_value, TimeUnit.MILLISECONDS);
     }
 
     private void manageStored(String version, int senderId, String fileId, int chunkNo) {
         if (senderId == PeerProtocol.getPeer().getPeer_id())
             return;
+        Storage peerStorage = PeerProtocol.getPeer().getStorage();
+        String chunkKey = fileId+"-"+chunkNo;
+        peerStorage.incrementChunkOccurences(chunkKey);
         System.out.printf("Received message: %s STORED %d %s %d\n", version, senderId, fileId, chunkNo);
     }
 
