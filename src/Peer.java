@@ -82,7 +82,18 @@ public class Peer implements PeerInterface{
     }
 
     @Override
-    public String delete(String file) {
+    public String delete(String file_path) {
+        FileInfo file = new FileInfo(file_path);
+        String fileId = "";
+
+        try {
+            fileId = file.generateFileID();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        this.storage.deleteChunk(fileId);
+
         return "delete";
     }
 
