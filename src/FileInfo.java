@@ -10,12 +10,10 @@ import java.util.*;
 public class FileInfo {
     private String fileId;
     private File file;
-    private int replication_degree;
     private Set<Chunk> chunks = new HashSet<Chunk>();
     private int chunk_size = 64000;
 
-    public FileInfo(String filename, Integer replication_degree) {
-        this.replication_degree = replication_degree;
+    public FileInfo(String filename) {
 
         String root = System.getProperty("user.dir");
         String filepathWin = "\\resources\\" + filename; // in case of Windows
@@ -62,7 +60,7 @@ public class FileInfo {
         return number.toString();
     }
 
-    public void prepareChunks() {
+    public void prepareChunks(int replication_degree) {
         byte[] content = new byte[chunk_size];
         int chunck_nr = 0;
 
@@ -75,7 +73,7 @@ public class FileInfo {
             while ((nr_bytes = buffer.read(content)) > 0)
             {
                 byte[] info = Arrays.copyOf(content, nr_bytes);
-                Chunk chunk = new Chunk(this.fileId, chunck_nr, nr_bytes, this.replication_degree, info);
+                Chunk chunk = new Chunk(this.fileId, chunck_nr, nr_bytes, replication_degree, info);
                 chunks.add(chunk);
                 chunck_nr++;
             }

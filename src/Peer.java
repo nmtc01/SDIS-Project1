@@ -47,8 +47,8 @@ public class Peer implements PeerInterface{
     @Override
     public String backup(String file_path, Integer replication_degree) {
         //File creation
-        FileInfo file = new FileInfo(file_path, replication_degree);
-        file.prepareChunks();
+        FileInfo file = new FileInfo(file_path);
+        file.prepareChunks(replication_degree);
 
         //File store
         this.storage.storeFile(file, this.peer_id);

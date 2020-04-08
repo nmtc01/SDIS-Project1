@@ -3,7 +3,6 @@ public class Chunk {
     private Integer chunk_no;
     private Integer chunk_size;
     private int desired_replication_degree;
-    private int current_replication = 0;
     private byte[] content;
 
     public Chunk(String file_id, Integer chunk_no, Integer chunk_size, int replication_degree, byte[] content) {
@@ -18,32 +17,8 @@ public class Chunk {
         return file_id;
     }
 
-    public void setFile_id(String file_id) {
-        this.file_id = file_id;
-    }
-
     public Integer getChunk_no() {
         return chunk_no;
-    }
-
-    public void setChunk_no(Integer chunk_no) {
-        this.chunk_no = chunk_no;
-    }
-
-    public Integer getChunk_size() {
-        return chunk_size;
-    }
-
-    public void setChunk_size(Integer chunk_size) {
-        this.chunk_size = chunk_size;
-    }
-
-    public int getDesiredRepDeg() {
-        return this.desired_replication_degree;
-    }
-
-    public void setCurrent_replication(int replication_degree) {
-        this.current_replication = replication_degree;
     }
 
     public byte[] getContent() {

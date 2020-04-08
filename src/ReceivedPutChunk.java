@@ -17,10 +17,23 @@ public class ReceivedPutChunk implements Runnable {
 
     @Override
     public void run() {
-        MessageFactory messageFactory = new MessageFactory();
-        byte msg[] = messageFactory.storedMsg(this.version, PeerProtocol.getPeer().getPeer_id(), this.fileId, this.chunkNo);
-        DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
-        new Thread(new SendMessagesManager(sendPacket)).start();
-        System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
+        if(manageStorage()) {
+            MessageFactory messageFactory = new MessageFactory();
+            byte msg[] = messageFactory.storedMsg(this.version, PeerProtocol.getPeer().getPeer_id(), this.fileId, this.chunkNo);
+            DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+            new Thread(new SendMessagesManager(sendPacket)).start();
+            System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
+        }
+    }
+
+    public boolean manageStorage() {
+        Storage peerStorage = PeerProtocol.getPeer().getStorage();
+        String chunkKey = this.fileId+"-"+this.chunkNo;
+        if (peerStorage.getChunkCurrentDegree(chunkKey) < this.repDeg) {
+            Chunk chunk = new Chunk(this.fileId, this.chunkNo, this.body.length, this.repDeg, this.body);
+            peerStorage.storeChunk(chunk, PeerProtocol.getPeer().getPeer_id());
+            return true;
+        }
+        else return false;
     }
 }

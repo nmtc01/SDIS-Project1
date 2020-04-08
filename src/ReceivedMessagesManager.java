@@ -62,9 +62,9 @@ public class ReceivedMessagesManager implements Runnable {
         //If the peer that sent is the same peer receiving
         if (senderId == PeerProtocol.getPeer().getPeer_id())
             return;
-        ReceivedPutChunk receivedPutChunk = new ReceivedPutChunk(version, fileId, chunkNo, repDeg, body);
         System.out.printf("Received message: %s PUTCHUNK %d %s %d %d\n", version, senderId, fileId, chunkNo, repDeg);
         Random random = new Random();
+        ReceivedPutChunk receivedPutChunk = new ReceivedPutChunk(version, fileId, chunkNo, repDeg, body);
         PeerProtocol.getThreadExecutor().schedule(receivedPutChunk, random.nextInt(401), TimeUnit.MILLISECONDS);
     }
 

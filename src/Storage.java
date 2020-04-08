@@ -1,12 +1,13 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Storage {
     private double free_space;
     private File directory;
     private boolean isUnix = true;
-    private ArrayList<FileInfo> storedFiles;
-    private ArrayList<Chunk> storedChunks;
+    private ArrayList<Chunk> storedChunks = new ArrayList<>();
+    private ConcurrentHashMap<String, Integer> chunks_current_degrees = new ConcurrentHashMap<>();
 
     public Storage(double space, int peer_id){
         this.free_space = space;
@@ -81,6 +82,7 @@ public class Storage {
     }
 
     public void storeChunk(Chunk chunk, int peer_id) {
+        //Store on system
         String fileFolder;
         if (this.isUnix)
             fileFolder = directory.getPath()+ "/file" + chunk.getFile_id();
@@ -94,6 +96,16 @@ public class Storage {
             }
         }
         else exportChunk(tmp, chunk);
+
+        //Store on hashmap and list
+        String key = chunk.getFile_id()+"-"+chunk.getChunk_no();
+        if (this.chunks_current_degrees.containsKey(key)) {
+            this.chunks_current_degrees.replace(key, this.chunks_current_degrees.get(key)+1);
+        }
+        else {
+            this.chunks_current_degrees.put(key, 1);
+            this.storedChunks.add(chunk);
+        }
     }
 
     public void exportChunk(File directory, Chunk chunk) {
@@ -114,5 +126,11 @@ public class Storage {
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getChunkCurrentDegree(String chunkKey) {
+        if (this.chunks_current_degrees.contains(chunkKey))
+            return this.chunks_current_degrees.get(chunkKey);
+        else return 0;
     }
 }
