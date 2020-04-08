@@ -61,6 +61,7 @@ public class Peer implements PeerInterface{
             Chunk chunk = chunkIterator.next();
             byte msg[] = messageFactory.putChunkMsg(chunk, replication_degree, this.peer_id);
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+            System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
             SendMessagesManager msgHandler = new SendMessagesManager(sendPacket);
             PeerProtocol.getThreadExecutor().execute(msgHandler);
             try {

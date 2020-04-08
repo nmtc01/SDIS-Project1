@@ -18,7 +18,7 @@ public class SendMessagesManager implements Runnable {
                 managePutChunk(message);
                 break;
             case "STORED":
-                manageStored();
+                manageStored(message);
                 break;
             case "DELETE":
                 manageDelete();
@@ -51,6 +51,10 @@ public class SendMessagesManager implements Runnable {
         PeerProtocol.getPeer().getMDBChannel().send(message);
     }
 
+    private void manageStored(byte[] message) {
+        PeerProtocol.getPeer().getMCChannel().send(message);
+    }
+
     private void manageRemoved() {
 
     }
@@ -65,8 +69,5 @@ public class SendMessagesManager implements Runnable {
 
     private void manageDelete() {
 
-    }
-
-    private void manageStored() {
     }
 }

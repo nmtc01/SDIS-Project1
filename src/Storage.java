@@ -1,13 +1,19 @@
 import java.io.*;
+import java.util.ArrayList;
 
 public class Storage {
     private double free_space;
     private File directory;
     private boolean isUnix = true;
+    private ArrayList<FileInfo> storedFiles;
+    private ArrayList<Chunk> storedChunks;
 
     public Storage(double space, int peer_id){
         this.free_space = space;
+        createPeerDirectory(peer_id);
+    }
 
+    private void createPeerDirectory(int peer_id) {
         String root = System.getProperty("user.dir");
         String filepathWin = "\\PeerProtocol\\Peer" + peer_id; // in case of Windows
         String filepathUnix = "/PeerProtocol/Peer" + peer_id;

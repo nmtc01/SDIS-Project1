@@ -21,9 +21,7 @@ public class Channel implements Runnable {
     public void send(byte[] msg) {
         try {
             DatagramPacket packet = new DatagramPacket(msg, msg.length, this.group, this.port);
-            System.out.println("estou a enviar - group: " + this.group + ", port: " + this.port);
             receiverSocket.send(packet);
-            System.out.println("enviei - group: " + this.group + ", port: " + this.port);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -37,9 +35,7 @@ public class Channel implements Runnable {
             while (true) {
                 //REQUEST
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                System.out.println("estou pronto para receber - group: " + this.group + ", port: " + this.port);
                 receiverSocket.receive(packet);
-                System.out.println("Received message - peer" + PeerProtocol.getPeer().getPeer_id());
                 //MESSAGE
                 ReceivedMessagesManager manager = new ReceivedMessagesManager(packet);
                 PeerProtocol.getThreadExecutor().execute(manager);
