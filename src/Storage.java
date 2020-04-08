@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Storage {
@@ -78,6 +79,20 @@ public class Storage {
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void deleteChunk(String fileId) {
+        for (Iterator<Chunk> chunkIterator = this.storedChunks.iterator(); chunkIterator.hasNext();) {
+            Chunk chunk = chunkIterator.next();
+
+            if (chunk.getFile_id().equals(fileId)) {
+                String file_path = directory.getPath() + "/file" + chunk.getFile_id();
+                File file = new File(file_path);
+                file.delete();
+
+                chunkIterator.remove();
+            }
         }
     }
 
