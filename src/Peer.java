@@ -37,7 +37,7 @@ public class Peer implements PeerInterface{
     }
 
     public Storage getStorage() {
-        return storage;
+        return this.storage;
     }
 
     public Integer getPeer_id(){

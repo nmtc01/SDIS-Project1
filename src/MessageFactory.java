@@ -32,13 +32,13 @@ public class MessageFactory {
     }
 
     //<Version> STORED <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
-    public byte[] storedMsg(String version, int senderId, String fileId, int chunkNo, int repDeg) {
+    public byte[] storedMsg(String version, int senderId, String fileId, int chunkNo) {
 
         byte[] headerTerms = new byte[2];
         headerTerms[0] = 0xD;
         headerTerms[1] = 0xA;
         String headerString = version + " " + "STORED" + " " + senderId + " " + fileId + " " + chunkNo + " "
-                + repDeg + " ";
+                + " ";
         this.messageString = headerString;
         byte[] header = headerString.getBytes();
         byte[] putchunkMsg = new byte[header.length + headerTerms.length];

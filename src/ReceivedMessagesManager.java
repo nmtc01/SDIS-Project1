@@ -1,4 +1,6 @@
 import java.net.DatagramPacket;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class ReceivedMessagesManager implements Runnable {
     private String[] header;
@@ -22,7 +24,6 @@ public class ReceivedMessagesManager implements Runnable {
                 managePutChunk(version, senderId, fileId, chunkNo, repDeg, body);
                 break;
             case "STORED":
-                System.out.println("Stored received");
                 manageStored(version, senderId, fileId, chunkNo, repDeg);
                 break;
             case "DELETE":
@@ -57,7 +58,8 @@ public class ReceivedMessagesManager implements Runnable {
             return;
         System.out.printf("Received message: %s PUTCHUNK %d %s %d %d\n", version, senderId, fileId, chunkNo, repDeg);
         ReceivedPutChunk receivedPutChunk = new ReceivedPutChunk(version, fileId, chunkNo, repDeg, body);
-        PeerProtocol.getThreadExecutor().execute(receivedPutChunk);
+        Random random = new Random();
+        PeerProtocol.getThreadExecutor().schedule(receivedPutChunk, random.nextInt(401), TimeUnit.MILLISECONDS);
     }
 
     private void manageStored(String version, int senderId, String fileId, int chunkNo, int repDeg) {

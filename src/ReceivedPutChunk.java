@@ -18,7 +18,7 @@ public class ReceivedPutChunk implements Runnable {
     @Override
     public void run() {
         MessageFactory messageFactory = new MessageFactory();
-        byte msg[] = messageFactory.storedMsg(this.version, PeerProtocol.getPeer().getPeer_id(), this.fileId, this.chunkNo, this.repDeg);
+        byte msg[] = messageFactory.storedMsg(this.version, PeerProtocol.getPeer().getPeer_id(), this.fileId, this.chunkNo);
         DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
         System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
         PeerProtocol.getThreadExecutor().execute(new SendMessagesManager(sendPacket));
