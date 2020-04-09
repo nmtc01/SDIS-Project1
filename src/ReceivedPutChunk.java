@@ -32,7 +32,7 @@ public class ReceivedPutChunk implements Runnable {
         Storage peerStorage = PeerProtocol.getPeer().getStorage();
         String chunkKey = this.fileId+"-"+this.chunkNo;
 
-        if (peerStorage.getChunkCurrentDegree(chunkKey) < this.repDeg) {
+        if (peerStorage.getChunkCurrentDegree(chunkKey) < this.repDeg && peerStorage.getFreeSpace() > this.body.length) {
             Chunk chunk = new Chunk(this.fileId, this.chunkNo, this.body.length, this.repDeg, this.body);
             peerStorage.storeChunk(chunk);
             return true;

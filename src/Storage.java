@@ -158,11 +158,11 @@ public class Storage {
         else return 0;
     }
 
-    public void decFreeSpace(double size) {
+    public synchronized void decFreeSpace(double size) {
         this.free_space -= size;
     }
 
-    public double getFreeSpace() {
+    public synchronized double getFreeSpace() {
         return free_space;
     }
 }
