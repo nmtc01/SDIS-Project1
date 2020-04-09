@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Arrays;
 
 public class Channel implements Runnable {
     private String address;
@@ -37,7 +38,8 @@ public class Channel implements Runnable {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 receiverSocket.receive(packet);
                 //MESSAGE
-                ReceivedMessagesManager manager = new ReceivedMessagesManager(packet);
+                byte[] msg = Arrays.copyOf(buf, packet.getLength());
+                ReceivedMessagesManager manager = new ReceivedMessagesManager(msg);
                 new Thread(manager).start();
             }
         }

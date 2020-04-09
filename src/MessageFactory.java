@@ -21,6 +21,7 @@ public class MessageFactory {
         byte[] putchunkMsg = new byte[header.length + content.length];
         System.arraycopy(header, 0, putchunkMsg, 0, header.length);
         System.arraycopy(content, 0, putchunkMsg, header.length, content.length);
+        System.out.println("Size of put msg: "+putchunkMsg.length);
 
         return putchunkMsg;
     }

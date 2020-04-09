@@ -10,8 +10,8 @@ public class Storage {
     private ArrayList<Chunk> storedChunks = new ArrayList<>();
     private ConcurrentHashMap<String, Integer> chunks_current_degrees = new ConcurrentHashMap<>();
 
-    public Storage(double space, int peer_id){
-        this.free_space = space;
+    public Storage(int peer_id){
+        this.free_space = 1000000000;
         createPeerDirectory(peer_id);
     }
 
@@ -56,6 +56,9 @@ public class Storage {
             }
         }
         else exportFile(tmp, file.getFile());
+
+        //Decrement free space
+        decFreeSpace(file.getFile().length());
     }
 
     public void exportFile(File directory, File fileIn) {
@@ -115,6 +118,9 @@ public class Storage {
         String key = chunk.getFile_id()+"-"+chunk.getChunk_no();
         incrementChunkOccurences(key);
         this.storedChunks.add(chunk);
+
+        //Decrement free space
+        decFreeSpace(chunk.getContent().length);
     }
 
     public void exportChunk(File directory, Chunk chunk) {
@@ -150,5 +156,13 @@ public class Storage {
         if (this.chunks_current_degrees.containsKey(chunkKey))
             return this.chunks_current_degrees.get(chunkKey);
         else return 0;
+    }
+
+    public void decFreeSpace(double size) {
+        this.free_space -= size;
+    }
+
+    public double getFreeSpace() {
+        return free_space;
     }
 }

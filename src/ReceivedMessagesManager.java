@@ -7,8 +7,8 @@ public class ReceivedMessagesManager implements Runnable {
     private String[] header;
     private byte[] body;
 
-    public ReceivedMessagesManager(DatagramPacket packet) {
-        parsePacket(packet);
+    public ReceivedMessagesManager(byte[] msg) {
+        parseMsg(msg);
     }
 
     @Override
@@ -46,8 +46,7 @@ public class ReceivedMessagesManager implements Runnable {
         }
     }
 
-    public void parsePacket(DatagramPacket packet) {
-        byte[] data = packet.getData();
+    public void parseMsg(byte[] data) {
         int index;
         for (index = 0; index < data.length; index++) {
             if (data[index] == 0xD && data[index+1] == 0xA && data[index+2] == 0xD && data[index+3] == 0xA)
@@ -56,6 +55,7 @@ public class ReceivedMessagesManager implements Runnable {
         String headerStr = new String(Arrays.copyOfRange(data, 0, index));
         this.header = headerStr.split(" ");
         this.body = Arrays.copyOfRange(data, index+4, data.length);
+        System.out.println("Size of body extracting from packet on receiving side: " + this.body.length);
     }
 
     private void managePutChunk(String version, int senderId, String fileId, int chunkNo, int repDeg, byte[] body) {

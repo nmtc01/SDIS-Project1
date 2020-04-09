@@ -20,8 +20,8 @@ public class Peer implements PeerInterface{
         }
     }
 
-    public void initiateStorage(Double space) {
-        this.storage = new Storage(space, peer_id);
+    public void initiateStorage() {
+        this.storage = new Storage(peer_id);
     }
 
     public Channel getMCChannel(){
@@ -59,6 +59,7 @@ public class Peer implements PeerInterface{
         MessageFactory messageFactory = new MessageFactory();
         while(chunkIterator.hasNext()) {
             Chunk chunk = chunkIterator.next();
+            System.out.println("Chunk size: "+chunk.getContent().length);
             byte msg[] = messageFactory.putChunkMsg(chunk, replication_degree, this.peer_id);
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
             new Thread(new SendMessagesManager(sendPacket)).start();
@@ -70,8 +71,6 @@ public class Peer implements PeerInterface{
                 e.printStackTrace();
             }
         }
-
-        //TODO FINISH
 
         return "backup";
     }

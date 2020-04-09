@@ -43,7 +43,7 @@ public class PeerProtocol {
         establishCommunication(peer);
 
         //Initiate storage for initiator peer
-        peer.initiateStorage(0.0);
+        peer.initiateStorage();
 
     }
 
