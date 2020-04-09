@@ -1,5 +1,6 @@
 import java.net.DatagramPacket;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 public class Peer implements PeerInterface{
 
@@ -57,19 +58,23 @@ public class Peer implements PeerInterface{
         //TODO missing encode things
         Iterator<Chunk> chunkIterator = file.getChunks().iterator();
         MessageFactory messageFactory = new MessageFactory();
+
         while(chunkIterator.hasNext()) {
             Chunk chunk = chunkIterator.next();
-            System.out.println("Chunk size: "+chunk.getContent().length);
             byte msg[] = messageFactory.putChunkMsg(chunk, replication_degree, this.peer_id);
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
             new Thread(new SendMessagesManager(sendPacket)).start();
-            System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
+            String messageString = messageFactory.getMessageString();
+            System.out.printf("Sent message: %s\n", messageString);
             try {
                 Thread.sleep(500);
             }
             catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            String chunkKey = chunk.getFile_id()+"-"+chunk.getChunk_no();
+            PutChunkAttempts putChunkAttempts = new PutChunkAttempts(1, 5, sendPacket, chunkKey, replication_degree, messageString);
+            PeerProtocol.getThreadExecutor().schedule(putChunkAttempts, 1, TimeUnit.SECONDS);
         }
 
         return "backup";

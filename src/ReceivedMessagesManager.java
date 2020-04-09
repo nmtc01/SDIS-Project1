@@ -55,7 +55,6 @@ public class ReceivedMessagesManager implements Runnable {
         String headerStr = new String(Arrays.copyOfRange(data, 0, index));
         this.header = headerStr.split(" ");
         this.body = Arrays.copyOfRange(data, index+4, data.length);
-        System.out.println("Size of body extracting from packet on receiving side: " + this.body.length);
     }
 
     private void managePutChunk(String version, int senderId, String fileId, int chunkNo, int repDeg, byte[] body) {
