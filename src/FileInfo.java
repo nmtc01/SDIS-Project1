@@ -53,11 +53,17 @@ public class FileInfo {
     }
 
     public String sha256toString(byte[] sha256) {
-        // Convert byte array into big integer representation
-        BigInteger number = new BigInteger(1, sha256);
+        StringBuffer sha256String = new StringBuffer();
+
+        for (int i = 0; i < sha256.length; i++) {
+            String hex = Integer.toHexString(0xff & sha256[i]);
+            if (hex.length() == 1)
+                sha256String.append('0');
+            sha256String.append(hex);
+        }
 
         // Convert message digest into bitstring
-        return number.toString();
+        return sha256String.toString();
     }
 
     public void prepareChunks(int replication_degree) {

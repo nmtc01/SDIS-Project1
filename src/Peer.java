@@ -55,7 +55,6 @@ public class Peer implements PeerInterface{
         this.storage.storeFile(file, this.peer_id);
 
         //Send PUTCHUNK message for each file's chunk
-        //TODO missing encode things
         Iterator<Chunk> chunkIterator = file.getChunks().iterator();
         MessageFactory messageFactory = new MessageFactory();
 

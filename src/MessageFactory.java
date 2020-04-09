@@ -12,7 +12,6 @@ public class MessageFactory {
 
         String version = PeerProtocol.getProtocol_version();
         String fileId = chunk.getFile_id();
-        //TODO limit chunk size
         int chunkNo = chunk.getChunk_no();
         this.messageString = version + " " + "PUTCHUNK" + " " + peer_id + " " + fileId + " " + chunkNo + " " + replication_degree;
         String headerTerms = this.messageString + " \r\n\r\n";

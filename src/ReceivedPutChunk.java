@@ -25,7 +25,6 @@ public class ReceivedPutChunk implements Runnable {
             new Thread(new SendMessagesManager(sendPacket)).start();
             System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
         }
-        System.out.println("Space left: " + PeerProtocol.getPeer().getStorage().getFreeSpace());
     }
 
     public boolean manageStorage() {
