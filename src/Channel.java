@@ -10,10 +10,9 @@ public class Channel implements Runnable {
     private InetAddress group;
     private MulticastSocket receiverSocket;
 
-    public Channel(String full) throws IOException {
-        String[] MC = full.split(":", 2);
-        this.address = MC[0];
-        this.port = Integer.parseInt(MC[1]);
+    public Channel(String address, String port) throws IOException {
+        this.address = address;
+        this.port = Integer.parseInt(port);
         this.group = InetAddress.getByName(this.address);
         this.receiverSocket = new MulticastSocket(this.port);
         this.receiverSocket.joinGroup(this.group);

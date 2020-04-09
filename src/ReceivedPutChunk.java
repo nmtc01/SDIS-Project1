@@ -13,7 +13,6 @@ public class ReceivedPutChunk implements Runnable {
         this.chunkNo = chunkNo;
         this.repDeg = repDeg;
         this.body = body;
-        System.out.println("Size of body on receiving side: "+body.length);
     }
 
     @Override

@@ -22,10 +22,12 @@ public class PeerProtocol {
         //Parse channels
         Channel[] channels = new Channel[3];
         try {
-            for (int i = 3; i < 6; i++) {
-                Channel MC = new Channel(args[i]);
-                channels[i-3] = MC;
-            }
+            Channel MC = new Channel(args[3], args[4]);
+            channels[0] = MC;
+            Channel MDB = new Channel(args[5], args[6]);
+            channels[1] = MDB;
+            Channel MDR = new Channel(args[7], args[8]);
+            channels[2] = MDR;
         }
         catch (IOException e) {
             System.out.println(e.toString());
@@ -49,9 +51,9 @@ public class PeerProtocol {
 
     public static boolean parseArgs(String[] args) {
         //Check the number of arguments given
-        if (args.length != 6) {
+        if (args.length != 9) {
             System.out.println("Usage: java PeerProtocol version peer_id access_point MC MDB MDR");
-            System.out.println("Each channel in format address:port");
+            System.out.println("Each channel in format address port");
             return false;
         }
 
