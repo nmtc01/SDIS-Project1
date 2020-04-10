@@ -51,7 +51,7 @@ public class Peer implements PeerInterface{
     }
 
     @Override
-    public String backup(String file_path, Integer replication_degree) {
+    public synchronized String backup(String file_path, Integer replication_degree) {
         //File creation
         FileInfo file = new FileInfo(file_path);
         file.prepareChunks(replication_degree);
@@ -85,12 +85,12 @@ public class Peer implements PeerInterface{
     }
 
     @Override
-    public String restore(String file) {
+    public synchronized String restore(String file) {
         return "restore";
     }
 
     @Override
-    public String delete(String file_path) {
+    public synchronized String delete(String file_path) {
         FileInfo file = new FileInfo(file_path);
         String fileId = "";
 
@@ -106,7 +106,7 @@ public class Peer implements PeerInterface{
     }
 
     @Override
-    public String reclaim(Integer max_space) {
+    public synchronized String reclaim(Integer max_space) {
 
         double spaceUsed = this.storage.getOccupiedSpace();
         double spaceClaimed = max_space * 1000; //The client shall specify the maximum disk space in KBytes (1KByte = 1000 bytes)
@@ -153,7 +153,58 @@ public class Peer implements PeerInterface{
     }
 
     @Override
-    public String state() {
+    public synchronized String state() {
+        //For each file whose backup it has initiated
+        System.out.println("-> For each file whose backup it has initiated:");
+        for (int i = 0; i < this.storage.getStoredFiles().size(); i++) {
+            FileInfo fileInfo = this.storage.getStoredFiles().get(i);
+
+            //File pathname
+            String filename = fileInfo.getFile().getPath();
+            System.out.println("File pathname: "+filename);
+
+            //File id
+            String fileId = fileInfo.getFileId();
+            System.out.println("\tFile id: "+fileId);
+
+            //Replication degree
+            int repDeg = fileInfo.getReplicationDegree();
+            System.out.println("\tFile desired replication degree: "+repDeg);
+
+            System.out.println("\t-> For each chunk of the file:");
+            Iterator<Chunk> chunkIterator = fileInfo.getChunks().iterator();
+            while (chunkIterator.hasNext()) {
+                Chunk chunk = chunkIterator.next();
+
+                //Chunk id
+                String chunk_id = chunk.getFile_id()+"-"+chunk.getChunk_no();
+                System.out.println("\t  Chunk id: "+chunk_id);
+
+                //Perceived replication degree
+                int repDegree = this.storage.getChunkCurrentDegree(chunk_id);
+                System.out.println("\t  Perceived replication degree: "+repDegree);
+
+            }
+        }
+
+        //For each chunk it stores
+        System.out.println("-> For each chunk it stores:");
+        for (int i = 0; i < this.storage.getStoredChunks().size(); i++) {
+            Chunk chunk = this.storage.getStoredChunks().get(i);
+
+            //Chunk id
+            String chunk_id = chunk.getFile_id()+"-"+chunk.getChunk_no();
+            System.out.println("\tChunk id: "+chunk_id);
+
+            //Size
+            int size = chunk.getChunk_size();
+            System.out.println("\tChunk size: "+size);
+
+            //Perceived replication degree
+            int repDeg = this.storage.getChunkCurrentDegree(chunk_id);
+            System.out.println("\tPerceived replication degree: "+repDeg);
+        }
+
         return "state";
     }
 }

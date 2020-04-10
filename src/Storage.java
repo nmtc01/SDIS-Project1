@@ -8,6 +8,7 @@ public class Storage implements java.io.Serializable {
     private double space_used;
     private File directory;
     private boolean isUnix = true;
+    private ArrayList<FileInfo> storedFiles = new ArrayList<>();
     private ArrayList<Chunk> storedChunks = new ArrayList<>();
     private ConcurrentHashMap<String, Integer> chunks_current_degrees = new ConcurrentHashMap<>();
     private double total_space;
@@ -64,6 +65,9 @@ public class Storage implements java.io.Serializable {
                 System.out.println("Stored file " + file.getFile().getName() + " inside Peer" + peer_id);
             }
         } else exportFile(tmp, file.getFile());
+
+        //Store on list
+        this.storedFiles.add(file);
 
         //Decrement free space
         decFreeSpace(file.getFile().length());
@@ -196,5 +200,9 @@ public class Storage implements java.io.Serializable {
         String file_path = directory.getPath() + "/file" + chunk.getFile_id();
         File file = new File(file_path);
         file.delete();
+    }
+
+    public ArrayList<FileInfo> getStoredFiles() {
+        return this.storedFiles;
     }
 }

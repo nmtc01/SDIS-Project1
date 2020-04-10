@@ -11,6 +11,7 @@ public class FileInfo {
     private File file;
     private Set<Chunk> chunks = new HashSet<Chunk>();
     private int chunk_size = 64000;
+    private int replication_degree;
 
     public FileInfo(String filename) {
 
@@ -66,6 +67,7 @@ public class FileInfo {
     }
 
     public void prepareChunks(int replication_degree) {
+        this.replication_degree = replication_degree;
         byte[] content = new byte[chunk_size];
         int chunck_nr = 0;
 
@@ -100,5 +102,9 @@ public class FileInfo {
 
     public File getFile() {
         return this.file;
+    }
+
+    public int getReplicationDegree() {
+        return replication_degree;
     }
 }
