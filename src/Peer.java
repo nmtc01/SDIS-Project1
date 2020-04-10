@@ -1,4 +1,5 @@
 import java.net.DatagramPacket;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
@@ -102,6 +103,48 @@ public class Peer implements PeerInterface{
 
     @Override
     public String reclaim(Integer max_space) {
+
+        double spaceUsed = this.storage.getOccupiedSpace();
+        double spaceClaimed = max_space * 1000; //The client shall specify the maximum disk space in KBytes (1KByte = 1000 bytes)
+
+        if (spaceUsed <= spaceClaimed) {
+            this.storage.reclaimSpace(spaceClaimed, spaceUsed);
+        }
+
+        ArrayList<Chunk> chunks = this.storage.getStoredChunks();
+
+        if (chunks.isEmpty()) {
+            return "Impossible to reclaim space.";
+        }
+
+        double tmpSpace = spaceUsed - spaceClaimed;
+
+        Iterator<Chunk> chunkIterator = chunks.iterator();
+
+        do {
+            Chunk chunk = chunkIterator.next();
+            //send message
+            tmpSpace -= chunk.getChunk_size();
+            chunkIterator.remove();
+            this.storage.deleteChunk(chunk);
+        } while (tmpSpace > 0);
+
+        double totalSpaceOccupied = 0;
+
+        for (Chunk chunk: chunks) {
+            totalSpaceOccupied += chunk.getChunk_size();
+        }
+
+        if (totalSpaceOccupied == 0) {
+            for (Chunk chunk : chunks) {
+                this.storage.deleteChunk(chunk);
+            }
+
+            chunks.clear();
+        }
+
+        this.storage.reclaimSpace(spaceClaimed, totalSpaceOccupied);
+
         return "reclaim";
     }
 

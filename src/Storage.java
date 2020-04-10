@@ -5,12 +5,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Storage {
     private double free_space;
+    private double space_used;
     private File directory;
     private boolean isUnix = true;
     private ArrayList<Chunk> storedChunks = new ArrayList<>();
     private ConcurrentHashMap<String, Integer> chunks_current_degrees = new ConcurrentHashMap<>();
+    private double total_space;
 
-    public Storage(int peer_id){
+    public Storage(int peer_id) {
         this.free_space = 1000000000;
         createPeerDirectory(peer_id);
     }
@@ -19,19 +21,18 @@ public class Storage {
         String root = System.getProperty("user.dir");
         String filepathWin = "\\PeerProtocol\\Peer" + peer_id; // in case of Windows
         String filepathUnix = "/PeerProtocol/Peer" + peer_id;
-        String pathUnix = root+filepathUnix;
-        String pathWin = root+filepathWin;
+        String pathUnix = root + filepathUnix;
+        String pathWin = root + filepathWin;
 
         File tmpUnix = new File(pathUnix);
-        File tmpWin= new File(pathWin);
+        File tmpWin = new File(pathWin);
         this.directory = tmpUnix;
 
         if (!tmpUnix.exists()) {
             if (tmpUnix.mkdirs()) {
                 this.isUnix = true;
                 System.out.println("Created folder for Peer" + peer_id);
-            }
-            else {
+            } else {
                 this.isUnix = false;
                 this.directory = tmpWin;
                 if (!tmpWin.exists())
@@ -41,11 +42,15 @@ public class Storage {
         }
     }
 
+    public ArrayList<Chunk> getStoredChunks() {
+        return storedChunks;
+    }
+
     public void storeFile(FileInfo file, int peer_id) {
         String fileFolder;
         if (this.isUnix)
-            fileFolder = directory.getPath()+ "/file" + file.getFileId();
-        else fileFolder = directory.getPath()+ "\\file" + file.getFileId();
+            fileFolder = directory.getPath() + "/file" + file.getFileId();
+        else fileFolder = directory.getPath() + "\\file" + file.getFileId();
 
         File tmp = new File(fileFolder);
         if (!tmp.exists()) {
@@ -54,8 +59,7 @@ public class Storage {
                 exportFile(tmp, file.getFile());
                 System.out.println("Stored file " + file.getFile().getName() + " inside Peer" + peer_id);
             }
-        }
-        else exportFile(tmp, file.getFile());
+        } else exportFile(tmp, file.getFile());
 
         //Decrement free space
         decFreeSpace(file.getFile().length());
@@ -66,8 +70,7 @@ public class Storage {
             File fileOut;
             if (this.isUnix) {
                 fileOut = new File(directory.getPath() + "/" + fileIn.getName());
-            }
-            else fileOut = new File(directory.getPath() + "\\" + fileIn.getName());
+            } else fileOut = new File(directory.getPath() + "\\" + fileIn.getName());
 
             //READ
             FileInputStream myReader = new FileInputStream(fileIn);
@@ -79,14 +82,13 @@ public class Storage {
             FileOutputStream myWriter = new FileOutputStream(fileOut);
             myWriter.write(input);
             myWriter.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void deleteChunk(String fileId) {
-        for (Iterator<Chunk> chunkIterator = this.storedChunks.iterator(); chunkIterator.hasNext();) {
+        for (Iterator<Chunk> chunkIterator = this.storedChunks.iterator(); chunkIterator.hasNext(); ) {
             Chunk chunk = chunkIterator.next();
 
             if (chunk.getFile_id().equals(fileId)) {
@@ -108,19 +110,18 @@ public class Storage {
         //Store on system
         String fileFolder;
         if (this.isUnix)
-            fileFolder = directory.getPath()+ "/file" + chunk.getFile_id();
-        else fileFolder = directory.getPath()+ "\\file" + chunk.getFile_id();
+            fileFolder = directory.getPath() + "/file" + chunk.getFile_id();
+        else fileFolder = directory.getPath() + "\\file" + chunk.getFile_id();
 
         File tmp = new File(fileFolder);
         if (!tmp.exists()) {
             if (tmp.mkdirs()) {
                 exportChunk(tmp, chunk);
             }
-        }
-        else exportChunk(tmp, chunk);
+        } else exportChunk(tmp, chunk);
 
         //Store on hashmap and list
-        String key = chunk.getFile_id()+"-"+chunk.getChunk_no();
+        String key = chunk.getFile_id() + "-" + chunk.getChunk_no();
         incrementChunkOccurences(key);
         this.storedChunks.add(chunk);
 
@@ -133,8 +134,7 @@ public class Storage {
             File fileOut;
             if (this.isUnix) {
                 fileOut = new File(directory.getPath() + "/" + "chunk" + chunk.getChunk_no());
-            }
-            else fileOut = new File(directory.getPath() + "\\" + "chunk" + chunk.getChunk_no());
+            } else fileOut = new File(directory.getPath() + "\\" + "chunk" + chunk.getChunk_no());
 
             byte[] input = chunk.getContent();
 
@@ -142,17 +142,15 @@ public class Storage {
             FileOutputStream myWriter = new FileOutputStream(fileOut);
             myWriter.write(input);
             myWriter.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void incrementChunkOccurences(String key) {
         if (this.chunks_current_degrees.containsKey(key)) {
-            this.chunks_current_degrees.replace(key, this.chunks_current_degrees.get(key)+1);
-        }
-        else {
+            this.chunks_current_degrees.replace(key, this.chunks_current_degrees.get(key) + 1);
+        } else {
             this.chunks_current_degrees.put(key, 1);
         }
     }
@@ -169,5 +167,30 @@ public class Storage {
 
     public synchronized double getFreeSpace() {
         return free_space;
+    }
+
+    public double getOccupiedSpace() {
+        space_used = this.getTotalSpace() + free_space;
+        return space_used;
+    }
+
+    public double getTotalSpace() {
+        for (Iterator<Chunk> chunkIterator = this.storedChunks.iterator(); chunkIterator.hasNext(); ) {
+            Chunk chunk = chunkIterator.next();
+            total_space += chunk.getChunk_size();
+        }
+        return total_space;
+    }
+
+    public void reclaimSpace(double spaceClaimed, double spaceUsed) {
+        this.total_space = spaceClaimed;
+        this.free_space = spaceClaimed - spaceUsed;
+        this.space_used = spaceUsed;
+    }
+
+    public void deleteChunk(Chunk chunk) {
+        String file_path = directory.getPath() + "/file" + chunk.getFile_id();
+        File file = new File(file_path);
+        file.delete();
     }
 }
