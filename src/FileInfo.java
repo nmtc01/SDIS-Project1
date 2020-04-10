@@ -1,8 +1,7 @@
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -37,7 +36,7 @@ public class FileInfo {
         try {
             fileId = sha256toString(sha256(filename+"."+date+"."+directory));
         }
-        catch (NoSuchAlgorithmException e) {
+        catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -45,8 +44,8 @@ public class FileInfo {
         return fileId;
     }
 
-    public byte[] sha256(String string) throws NoSuchAlgorithmException{
-        byte[] fileId = string.getBytes(StandardCharsets.UTF_8);
+    public byte[] sha256(String string) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        byte[] fileId = string.getBytes("UTF-8");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
 
         return md.digest(fileId);
