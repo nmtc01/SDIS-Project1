@@ -94,9 +94,14 @@ public class Storage {
                 File file = new File(file_path);
                 file.delete();
 
+                free_space += chunk.getChunk_size();
+
                 chunkIterator.remove();
             }
         }
+        String fileFolder = directory.getPath();
+        File folder = new File(fileFolder);
+        folder.delete();
     }
 
     public void storeChunk(Chunk chunk) {

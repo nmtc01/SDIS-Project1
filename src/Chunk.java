@@ -24,4 +24,12 @@ public class Chunk {
     public byte[] getContent() {
         return this.content;
     }
+
+    public Integer getChunk_size() {
+        return chunk_size;
+    }
+
+    public int getDesired_replication_degree() {
+        return desired_replication_degree;
+    }
 }
