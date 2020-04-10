@@ -1,4 +1,4 @@
-import java.io.IOException;
+import java.io.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -44,9 +44,12 @@ public class PeerProtocol {
         //Establish RMI communication between TestApp and Peer
         establishCommunication(peer);
 
-        //Initiate storage for initiator peer
-        peer.initiateStorage();
+        //Initiate or load storage for initiator peer
+        if (!loadPeerStorage())
+            peer.initiateStorage();
 
+        //Safe and exit
+        Runtime.getRuntime().addShutdownHook(new Thread(PeerProtocol::savePeerStorage));
     }
 
     public static boolean parseArgs(String[] args) {
@@ -95,5 +98,60 @@ public class PeerProtocol {
 
     public static ScheduledThreadPoolExecutor getThreadExecutor() {
         return threadExecutor;
+    }
+
+    private static void savePeerStorage() {
+        try {
+            Storage storage = PeerProtocol.getPeer().getStorage();
+            String filename;
+            if (storage.isUnix())
+                filename = peer_id + "/storage.ser";
+            else filename = peer_id + "\\storage.ser";
+
+            File file = new File(filename);
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+
+            FileOutputStream fileOut = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(storage);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    private static boolean loadPeerStorage() {
+        try {
+            String filenameUnix = "Storage/" + peer_id + "/storage.ser";
+            String filenameWin = "Storage\\" + peer_id + "\\storage.ser";
+
+            File file = new File(filenameUnix);
+            String filename = filenameUnix;
+
+            if (!file.exists()) {
+                file = new File(filenameWin);
+                filename = filenameWin;
+                if (!file.exists()) {
+                    return false;
+                }
+            }
+
+            FileInputStream fileIn = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            PeerProtocol.getPeer().setStorage((Storage) in.readObject());
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+            return false;
+        } catch (ClassNotFoundException c) {
+            c.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

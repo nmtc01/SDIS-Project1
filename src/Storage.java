@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Storage {
+public class Storage implements java.io.Serializable {
     private double free_space;
     private double space_used;
     private File directory;
@@ -44,6 +44,10 @@ public class Storage {
 
     public ArrayList<Chunk> getStoredChunks() {
         return storedChunks;
+    }
+
+    public boolean isUnix() {
+        return isUnix;
     }
 
     public void storeFile(FileInfo file, int peer_id) {

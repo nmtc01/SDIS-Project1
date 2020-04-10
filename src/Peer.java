@@ -42,6 +42,10 @@ public class Peer implements PeerInterface{
         return this.storage;
     }
 
+    public void setStorage(Storage storage) {
+        this.storage = storage;
+    }
+
     public Integer getPeer_id(){
         return this.peer_id;
     }

@@ -1,4 +1,4 @@
-public class Chunk {
+public class Chunk implements java.io.Serializable{
     private String file_id;
     private Integer chunk_no;
     private Integer chunk_size;
