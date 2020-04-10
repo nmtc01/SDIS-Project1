@@ -1,5 +1,6 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Iterator;
 
 public class TestApp {
     private static String remote_object_name;
@@ -19,8 +20,9 @@ public class TestApp {
         //Parse sub_protocol
         sub_protocol = args[1];
         //Parse operands
-        operand1 = args[2];
-        if (sub_protocol.equals("BACKUP"))
+        if (!sub_protocol.equals("STATE") && !sub_protocol.equals("state"))
+            operand1 = args[2];
+        if (sub_protocol.equals("BACKUP") || sub_protocol.equals("backup"))
             operand2 = Integer.parseInt(args[3]);
 
         return true;
@@ -37,6 +39,7 @@ public class TestApp {
 
             //Choose the path
             String response = new String();
+            Storage state_response;
             switch (sub_protocol) {
                 case "BACKUP": {
                     response = peer.backup(operand1, operand2);
@@ -55,7 +58,59 @@ public class TestApp {
                     break;
                 }
                 case "STATE": {
-                    response = peer.state();
+                    state_response = peer.state();
+
+                    //For each file whose backup it has initiated
+                    System.out.println("-> For each file whose backup it has initiated:");
+                    for (int i = 0; i < state_response.getStoredFiles().size(); i++) {
+                        FileInfo fileInfo = state_response.getStoredFiles().get(i);
+
+                        //File pathname
+                        String filename = fileInfo.getFile().getPath();
+                        System.out.println("File pathname: "+filename);
+
+                        //File id
+                        String fileId = fileInfo.getFileId();
+                        System.out.println("\tFile id: "+fileId);
+
+                        //Replication degree
+                        int repDeg = fileInfo.getReplicationDegree();
+                        System.out.println("\tFile desired replication degree: "+repDeg);
+
+                        System.out.println("\t-> For each chunk of the file:");
+                        Iterator<Chunk> chunkIterator = fileInfo.getChunks().iterator();
+                        while (chunkIterator.hasNext()) {
+                            Chunk chunk = chunkIterator.next();
+
+                            //Chunk id
+                            String chunk_id = chunk.getFile_id()+"-"+chunk.getChunk_no();
+                            System.out.println("\t  Chunk id: "+chunk_id);
+
+                            //Perceived replication degree
+                            int repDegree = state_response.getChunkCurrentDegree(chunk_id);
+                            System.out.println("\t  Perceived replication degree: "+repDegree);
+
+                        }
+                    }
+
+                    //For each chunk it stores
+                    System.out.println("-> For each chunk it stores:");
+                    for (int i = 0; i < state_response.getStoredChunks().size(); i++) {
+                        Chunk chunk = state_response.getStoredChunks().get(i);
+
+                        //Chunk id
+                        String chunk_id = chunk.getFile_id()+"-"+chunk.getChunk_no();
+                        System.out.println("\tChunk id: "+chunk_id);
+
+                        //Size
+                        int size = chunk.getChunk_size();
+                        System.out.println("\tChunk size: "+size);
+
+                        //Perceived replication degree
+                        int repDeg = state_response.getChunkCurrentDegree(chunk_id);
+                        System.out.println("\tPerceived replication degree: "+repDeg);
+                    }
+
                     break;
                 }
             }

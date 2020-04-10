@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-public class FileInfo {
+public class FileInfo implements java.io.Serializable {
     private String fileId;
     private File file;
     private Set<Chunk> chunks = new HashSet<Chunk>();

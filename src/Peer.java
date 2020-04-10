@@ -81,12 +81,12 @@ public class Peer implements PeerInterface{
             PeerProtocol.getThreadExecutor().schedule(putChunkAttempts, 1, TimeUnit.SECONDS);
         }
 
-        return "backup";
+        return "Backup sucessful";
     }
 
     @Override
     public synchronized String restore(String file) {
-        return "restore";
+        return "Restore successful";
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Peer implements PeerInterface{
 
         this.storage.deleteChunk(fileId);
 
-        return "delete";
+        return "Delete successful";
     }
 
     @Override
@@ -149,11 +149,11 @@ public class Peer implements PeerInterface{
 
         this.storage.reclaimSpace(spaceClaimed, totalSpaceOccupied);
 
-        return "reclaim";
+        return "Reclaim successful";
     }
 
     @Override
-    public synchronized String state() {
+    public synchronized Storage state() {
         //For each file whose backup it has initiated
         System.out.println("-> For each file whose backup it has initiated:");
         for (int i = 0; i < this.storage.getStoredFiles().size(); i++) {
@@ -205,6 +205,6 @@ public class Peer implements PeerInterface{
             System.out.println("\tPerceived replication degree: "+repDeg);
         }
 
-        return "state";
+        return this.storage;
     }
 }
