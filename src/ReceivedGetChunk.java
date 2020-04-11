@@ -20,8 +20,11 @@ public class ReceivedGetChunk implements Runnable {
                 MessageFactory messageFactory = new MessageFactory();
                 byte msg[] = messageFactory.chunkMsg(this.version, PeerProtocol.getPeer().getPeer_id(), this.fileId, this.chunkNo, chunk.getContent());
                 DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
-                new Thread(new SendMessagesManager(sendPacket)).start();
-                System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
+                String chunkKey = this.fileId+"-"+this.chunkNo;
+                if (!PeerProtocol.getPeer().getStorage().getRestoreChunks().containsKey(chunkKey)) {
+                    new Thread(new SendMessagesManager(sendPacket)).start();
+                    System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
+                }
             }
         }
     }

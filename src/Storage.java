@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Storage implements java.io.Serializable {
@@ -10,6 +12,7 @@ public class Storage implements java.io.Serializable {
     private boolean isUnix = true;
     private ArrayList<FileInfo> storedFiles = new ArrayList<>();
     private ArrayList<Chunk> storedChunks = new ArrayList<>();
+    private ConcurrentHashMap<String, byte[]> restoreChunks = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Integer> chunks_current_degrees = new ConcurrentHashMap<>();
     private double total_space;
 
@@ -71,6 +74,26 @@ public class Storage implements java.io.Serializable {
 
         //Decrement free space
         decFreeSpace(file.getFile().length());
+    }
+
+    public void restoreFile(File fileOut) {
+        if (this.isUnix) {
+            fileOut = new File(directory.getPath() + "/Restored/" + fileOut.getName());
+        } else fileOut = new File(directory.getPath() + "\\Restored\\" + fileOut.getName());
+
+        List<String> sortedChunkKeys = new ArrayList<>(this.getRestoreChunks().keySet());
+        sortedChunkKeys.sort(new ChunkKeyComparator());
+        try {
+            for (String key : sortedChunkKeys) {
+                //WRITE
+                FileOutputStream myWriter = new FileOutputStream(fileOut);
+                myWriter.write(this.restoreChunks.get(key));
+                myWriter.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.restoreChunks.clear();
     }
 
     public void exportFile(File directory, File fileIn) {
@@ -204,5 +227,27 @@ public class Storage implements java.io.Serializable {
 
     public ArrayList<FileInfo> getStoredFiles() {
         return this.storedFiles;
+    }
+
+    public ConcurrentHashMap<String, byte[]> getRestoreChunks() {
+        return restoreChunks;
+    }
+
+    public class ChunkKeyComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String chunkKey1, String chunkKey2) {
+            String[] chunk1 = chunkKey1.split("-");
+            String[] chunk2 = chunkKey2.split("-");
+
+            int chunkNo1 = Integer.parseInt(chunk1[1]);
+            int chunkNo2 = Integer.parseInt(chunk2[1]);
+
+            if (chunkNo1 < chunkNo2)
+                return 1;
+            if (chunkNo1 > chunkNo2)
+                return -1;
+            return 0;
+        }
     }
 }

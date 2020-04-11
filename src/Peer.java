@@ -89,11 +89,12 @@ public class Peer implements PeerInterface{
     public synchronized String restore(String file) {
         Boolean file_exists = false;
         Storage peerStorage = this.storage;
-        for (int i = 0; i < peerStorage.getStoredFiles().size(); i++)
+        for (int i = 0; i < peerStorage.getStoredFiles().size(); i++) {
+            FileInfo fileInfo;
             if (peerStorage.getStoredFiles().get(i).getFile().getName().equals(file)) {
                 file_exists = true;
                 //Get previously backed up file
-                FileInfo fileInfo = peerStorage.getStoredFiles().get(i);
+                fileInfo = peerStorage.getStoredFiles().get(i);
                 //Get file chunks
                 Set<Chunk> chunks = peerStorage.getStoredFiles().get(i).getChunks();
                 Iterator<Chunk> chunkIterator = chunks.iterator();
@@ -110,8 +111,11 @@ public class Peer implements PeerInterface{
                     String messageString = messageFactory.getMessageString();
                     System.out.printf("Sent message: %s\n", messageString);
                 }
-                new Thread(new RestoreChunks(file)).start(); //TODO check if use schedule instead
+                while (fileInfo.getChunks().size() != this.storage.getStoredChunks().size()) {}
+                new Thread(new RestoreChunks(file)).start();
+                break;
             }
+        }
 
         if (file_exists)
             return "Restore successful";

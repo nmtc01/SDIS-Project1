@@ -1,4 +1,3 @@
-import java.net.DatagramPacket;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -95,7 +94,8 @@ public class ReceivedMessagesManager implements Runnable {
         if (senderId == PeerProtocol.getPeer().getPeer_id())
             return;
         System.out.printf("Received message: %s CHUNK %d %s %d %d\n", version, senderId, fileId, chunkNo);
-        //TODO finish this
+        String chunkKey = fileId+"-"+chunkNo;
+        PeerProtocol.getPeer().getStorage().getRestoreChunks().putIfAbsent(chunkKey, body);
     }
 
     private void manageDelete(String version, int senderId, String fileId) {
