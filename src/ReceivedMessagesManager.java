@@ -33,10 +33,10 @@ public class ReceivedMessagesManager implements Runnable {
                 manageDelete(version, senderId, fileId);
                 break;
             case "GETCHUNK":
-                manageGetChunk();
+                manageGetChunk(version, senderId, fileId, chunkNo);
                 break;
             case "CHUNK":
-                manageChunk();
+                manageChunk(version, senderId, fileId, chunkNo, body);
                 break;
             case "REMOVED":
                 manageRemoved();
@@ -81,12 +81,21 @@ public class ReceivedMessagesManager implements Runnable {
 
     }
 
-    private void manageChunk() {
-
+    private void manageGetChunk(String version, int senderId, String fileId, int chunkNo) {
+        if (senderId == PeerProtocol.getPeer().getPeer_id())
+            return;
+        System.out.printf("Received message: %s GETCHUNK %d %s %d\n", version, senderId, fileId, chunkNo);
+        Random random = new Random();
+        int random_value = random.nextInt(401);
+        ReceivedGetChunk receivedGetChunk = new ReceivedGetChunk(version, fileId, chunkNo);
+        PeerProtocol.getThreadExecutor().schedule(receivedGetChunk, random_value, TimeUnit.MILLISECONDS);
     }
 
-    private void manageGetChunk() {
-
+    private void manageChunk(String version, int senderId, String fileId, int chunkNo, byte[] body) {
+        if (senderId == PeerProtocol.getPeer().getPeer_id())
+            return;
+        System.out.printf("Received message: %s CHUNK %d %s %d %d\n", version, senderId, fileId, chunkNo);
+        //TODO finish this
     }
 
     private void manageDelete(String version, int senderId, String fileId) {

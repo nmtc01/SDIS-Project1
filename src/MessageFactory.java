@@ -51,6 +51,18 @@ public class MessageFactory {
         return getChunkMsg;
     }
 
+    //<Version> CHUNK <SenderId> <FileId> <ChunkNo> <CRLF><CRLF><Body>
+    public byte[] chunkMsg(String version, int senderId, String fileId, int chunkNo, byte[] body) {
+        this.messageString = version + " " + "CHUNK" + " " + senderId + " " + fileId + " " + chunkNo;
+        String headerTerms = this.messageString + " \r\n\r\n";
+        byte[] header = headerTerms.getBytes();
+        byte[] chunkMsg = new byte[header.length + body.length];
+        System.arraycopy(header, 0, chunkMsg, 0, header.length);
+        System.arraycopy(body, 0, chunkMsg, header.length, body.length);
+
+        return chunkMsg;
+    }
+
     //<Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
     public byte[] deleteMsg(Chunk chunk, int senderId) {
 

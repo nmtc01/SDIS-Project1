@@ -1,6 +1,7 @@
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class Peer implements PeerInterface{
@@ -86,16 +87,35 @@ public class Peer implements PeerInterface{
 
     @Override
     public synchronized String restore(String file) {
-        //Get previously backed up file
-        /*Storage peerStorage = this.storage;
+        Boolean file_exists = false;
+        Storage peerStorage = this.storage;
         for (int i = 0; i < peerStorage.getStoredFiles().size(); i++)
-            if (peerStorage.getStoredFiles().get(i).getFile().getName().equals(file))
+            if (peerStorage.getStoredFiles().get(i).getFile().getName().equals(file)) {
+                file_exists = true;
+                //Get previously backed up file
+                FileInfo fileInfo = peerStorage.getStoredFiles().get(i);
+                //Get file chunks
+                Set<Chunk> chunks = peerStorage.getStoredFiles().get(i).getChunks();
+                Iterator<Chunk> chunkIterator = chunks.iterator();
+                //For each chunk
+                while (chunkIterator.hasNext()) {
+                    Chunk chunk = chunkIterator.next();
+                    //Prepare message to send
+                    MessageFactory messageFactory = new MessageFactory();
+                    byte[] msg = messageFactory.getChunkMsg(PeerProtocol.getProtocol_version(), this.peer_id, fileInfo.getFileId(), chunk.getChunk_no());
 
-        MessageFactory messageFactory = new MessageFactory();
+                    //Send message
+                    DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+                    new Thread(new SendMessagesManager(sendPacket)).start();
+                    String messageString = messageFactory.getMessageString();
+                    System.out.printf("Sent message: %s\n", messageString);
+                }
+                new Thread(new RestoreChunks(file)).start(); //TODO check if use schedule instead
+            }
 
-        byte[] msg = messageFactory.getChunkMsg(PeerProtocol.getProtocol_version(), this.peer_id, fileInfo.getFileId(), );*/
-
-        return "Restore successful";
+        if (file_exists)
+            return "Restore successful";
+        else return "File was not backed up previously";
     }
 
     @Override
