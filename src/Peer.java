@@ -86,6 +86,15 @@ public class Peer implements PeerInterface{
 
     @Override
     public synchronized String restore(String file) {
+        //Get previously backed up file
+        /*Storage peerStorage = this.storage;
+        for (int i = 0; i < peerStorage.getStoredFiles().size(); i++)
+            if (peerStorage.getStoredFiles().get(i).getFile().getName().equals(file))
+
+        MessageFactory messageFactory = new MessageFactory();
+
+        byte[] msg = messageFactory.getChunkMsg(PeerProtocol.getProtocol_version(), this.peer_id, fileInfo.getFileId(), );*/
+
         return "Restore successful";
     }
 

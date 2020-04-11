@@ -27,17 +27,28 @@ public class MessageFactory {
     //<Version> STORED <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
     public byte[] storedMsg(String version, int senderId, String fileId, int chunkNo) {
 
+        this.messageString = version + " " + "STORED" + " " + senderId + " " + fileId + " " + chunkNo;
+        String headerTerms = this.messageString + " \r\n\r\n";
+        byte[] header = headerTerms.getBytes();
+        byte[] storedMsg = new byte[header.length];
+        System.arraycopy(header, 0, storedMsg, 0, header.length);
+
+        return storedMsg;
+    }
+
+    //<Version> GETCHUNK <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
+    public byte[] getChunkMsg(String version, int senderId, String fileId, int chunkNo) {
+
         byte[] headerTerms = new byte[2];
         headerTerms[0] = 0xD;
         headerTerms[1] = 0xA;
-        this.messageString = version + " " + "STORED" + " " + senderId + " " + fileId + " " + chunkNo;
-        String headerString = this.messageString + " \r\n\r\n";
-        byte[] header = headerString.getBytes();
-        byte[] putchunkMsg = new byte[header.length + headerTerms.length];
-        System.arraycopy(header, 0, putchunkMsg, 0, header.length);
-        System.arraycopy(headerTerms, 0, putchunkMsg, header.length, headerTerms.length);
+        this.messageString = version + " " + "GETCHUNK" + " " + senderId + " " + fileId + " " + chunkNo + " ";
+        byte[] header = this.messageString.getBytes();
+        byte[] getChunkMsg = new byte[header.length + headerTerms.length];
+        System.arraycopy(header, 0, getChunkMsg, 0, header.length);
+        System.arraycopy(headerTerms, 0, getChunkMsg, header.length, headerTerms.length);
 
-        return putchunkMsg;
+        return getChunkMsg;
     }
 
     //<Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
