@@ -30,7 +30,7 @@ public class ReceivedMessagesManager implements Runnable {
                 manageStored(version, senderId, fileId, chunkNo);
                 break;
             case "DELETE":
-                manageDelete();
+                manageDelete(version, senderId, fileId);
                 break;
             case "GETCHUNK":
                 manageGetChunk();
@@ -89,7 +89,9 @@ public class ReceivedMessagesManager implements Runnable {
 
     }
 
-    private void manageDelete() {
-
+    private void manageDelete(String version, int senderId, String fileId) {
+        if (senderId == PeerProtocol.getPeer().getPeer_id())
+            return;
+        System.out.printf("Received message: %s DELETE %d %s\n", version, senderId, fileId);
     }
 }

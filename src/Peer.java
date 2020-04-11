@@ -81,7 +81,7 @@ public class Peer implements PeerInterface{
             PeerProtocol.getThreadExecutor().schedule(putChunkAttempts, 1, TimeUnit.SECONDS);
         }
 
-        return "Backup sucessful";
+        return "Backup successful";
     }
 
     @Override
@@ -127,7 +127,18 @@ public class Peer implements PeerInterface{
 
         do {
             Chunk chunk = chunkIterator.next();
-            //send message
+            MessageFactory messageFactory = new MessageFactory();
+            byte msg[] = messageFactory.reclaimMsg(chunk, this.peer_id);
+            DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+            new Thread(new SendMessagesManager(sendPacket)).start();
+            String messageString = messageFactory.getMessageString();
+            System.out.printf("Sent message: %s\n", messageString);
+            try {
+                Thread.sleep(500);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             tmpSpace -= chunk.getChunk_size();
             chunkIterator.remove();
             this.storage.deleteChunk(chunk);
