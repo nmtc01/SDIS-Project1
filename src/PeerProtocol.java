@@ -105,8 +105,8 @@ public class PeerProtocol {
             Storage storage = PeerProtocol.getPeer().getStorage();
             String filename;
             if (storage.isUnix())
-                filename = peer_id + "/storage.ser";
-            else filename = peer_id + "\\storage.ser";
+                filename = "Storage/" + peer_id + "/storage.ser";
+            else filename = "Storage\\" + peer_id + "\\storage.ser";
 
             File file = new File(filename);
             if (!file.exists()) {
