@@ -21,7 +21,7 @@ public class SendMessagesManager implements Runnable {
                 manageStored(message);
                 break;
             case "DELETE":
-                manageDelete();
+                manageDelete(message);
                 break;
             case "GETCHUNK":
                 manageGetChunk();
@@ -30,7 +30,7 @@ public class SendMessagesManager implements Runnable {
                 manageChunk();
                 break;
             case "REMOVED":
-                manageRemoved();
+                manageRemoved(message);
                 break;
             default:
                 break;
@@ -55,8 +55,8 @@ public class SendMessagesManager implements Runnable {
         PeerProtocol.getPeer().getMCChannel().send(message);
     }
 
-    private void manageRemoved() {
-
+    private void manageRemoved(byte[] message) {
+        PeerProtocol.getPeer().getMCChannel().send(message);
     }
 
     private void manageChunk() {
@@ -67,7 +67,7 @@ public class SendMessagesManager implements Runnable {
 
     }
 
-    private void manageDelete() {
-
+    private void manageDelete(byte[] message) {
+        PeerProtocol.getPeer().getMCChannel().send(message);
     }
 }

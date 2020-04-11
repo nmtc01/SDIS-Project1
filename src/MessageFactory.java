@@ -39,4 +39,13 @@ public class MessageFactory {
 
         return putchunkMsg;
     }
+
+    //<Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
+    public byte[] deleteMsg(String version, int senderId, String fileId) {
+
+
+        byte[] putChunkMsg = new byte[header.length + headerTerms.length];
+
+        return putChunkMsg;
+    }
 }
