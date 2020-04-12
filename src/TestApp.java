@@ -10,19 +10,24 @@ public class TestApp {
 
     public static boolean parseArgs(String[] args) {
         //Check the number of arguments given
-        if (args.length != 4 && args[1] == "BACKUP" && args.length != 3) {
-            System.out.println("Usage: java TestApp <peer_ap> <sub_protocol> <opnd_1> [<opnd_2>]");
+        if (args.length < 2 || args.length > 4) {
+            System.out.println("Usage: java TestApp <peer_ap> <sub_protocol> [<opnd_1>] [<opnd_2>]");
+            return false;
+        }
+        //Parse sub_protocol
+        sub_protocol = args[1];
+        //Check right arguments for sub_protocol
+        if ((args.length != 4 && sub_protocol.equals("BACKUP")) || (args.length != 2 && sub_protocol.equals("STATE"))) {
+            System.out.println("Usage: java TestApp <peer_ap> <sub_protocol> [<opnd_1>] [<opnd_2>]");
             return false;
         }
 
         //Parse peer_ap
         remote_object_name = args[0];
-        //Parse sub_protocol
-        sub_protocol = args[1];
         //Parse operands
-        if (!sub_protocol.equals("STATE") && !sub_protocol.equals("state"))
+        if (!sub_protocol.equals("STATE"))
             operand1 = args[2];
-        if (sub_protocol.equals("BACKUP") || sub_protocol.equals("backup"))
+        if (sub_protocol.equals("BACKUP"))
             operand2 = Integer.parseInt(args[3]);
 
         return true;

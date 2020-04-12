@@ -12,6 +12,7 @@ public class ReceivedMessagesManager implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Received message");
         String version = header[0];
         String subProtocol = header[1];
         int senderId = Integer.parseInt(header[2]);
