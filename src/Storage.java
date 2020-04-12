@@ -258,9 +258,9 @@ public class Storage implements java.io.Serializable {
             int chunkNo2 = Integer.parseInt(chunk2[1]);
 
             if (chunkNo1 < chunkNo2)
-                return 1;
-            if (chunkNo1 > chunkNo2)
                 return -1;
+            if (chunkNo1 > chunkNo2)
+                return 1;
             return 0;
         }
     }
