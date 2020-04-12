@@ -76,16 +76,16 @@ public class Storage implements java.io.Serializable {
         decFreeSpace(file.getFile().length());
     }
 
-    public void restoreFile(File fileOut) {
+    public void restoreFile(File fileIn) {
         File fileFolder;
         boolean can_export = true;
         if (this.isUnix)
-            fileFolder = new File(directory.getPath() + "/Restored/");
-        else fileFolder = new File(directory.getPath() + "\\Restored\\");
+            fileFolder = new File(directory.getPath() + "/Restored");
+        else fileFolder = new File(directory.getPath() + "\\Restored");
 
         if (!fileFolder.exists()) {
             if (fileFolder.mkdirs()) {
-                System.out.println("Created folder for file " + fileOut.getName());
+                System.out.println("Created folder to restored files");
             }
             else can_export = false;
         }
@@ -95,13 +95,15 @@ public class Storage implements java.io.Serializable {
 
         List<String> sortedChunkKeys = new ArrayList<>(this.getRestoreChunks().keySet());
         sortedChunkKeys.sort(new ChunkKeyComparator());
+        File fileOut = new File(fileFolder+"/"+fileIn.getName());
         try {
+            FileOutputStream myWriter;
+            myWriter = new FileOutputStream(fileOut);
             for (String key : sortedChunkKeys) {
                 //WRITE
-                FileOutputStream myWriter = new FileOutputStream(fileOut);
                 myWriter.write(this.restoreChunks.get(key));
-                myWriter.close();
             }
+            myWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
