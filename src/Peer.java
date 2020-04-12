@@ -111,7 +111,7 @@ public class Peer implements PeerInterface{
                     String messageString = messageFactory.getMessageString();
                     System.out.printf("Sent message: %s\n", messageString);
                 }
-                while (fileInfo.getChunks().size() != this.storage.getStoredChunks().size()) {}
+                while (fileInfo.getChunks().size() != this.storage.getRestoreChunks().size()) {}
                 new Thread(new RestoreChunks(file)).start();
                 break;
             }
