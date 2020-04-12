@@ -77,9 +77,21 @@ public class Storage implements java.io.Serializable {
     }
 
     public void restoreFile(File fileOut) {
-        if (this.isUnix) {
-            fileOut = new File(directory.getPath() + "/Restored/" + fileOut.getName());
-        } else fileOut = new File(directory.getPath() + "\\Restored\\" + fileOut.getName());
+        File fileFolder;
+        boolean can_export = true;
+        if (this.isUnix)
+            fileFolder = new File(directory.getPath() + "/Restored/");
+        else fileFolder = new File(directory.getPath() + "\\Restored\\");
+
+        if (!fileFolder.exists()) {
+            if (fileFolder.mkdirs()) {
+                System.out.println("Created folder for file " + fileOut.getName());
+            }
+            else can_export = false;
+        }
+
+        if (!can_export)
+            return;
 
         List<String> sortedChunkKeys = new ArrayList<>(this.getRestoreChunks().keySet());
         sortedChunkKeys.sort(new ChunkKeyComparator());

@@ -87,7 +87,7 @@ public class Peer implements PeerInterface{
 
     @Override
     public synchronized String restore(String file) {
-        Boolean file_exists = false;
+        boolean file_exists = false;
         Storage peerStorage = this.storage;
         for (int i = 0; i < peerStorage.getStoredFiles().size(); i++) {
             FileInfo fileInfo;
