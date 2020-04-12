@@ -12,7 +12,6 @@ public class ReceivedMessagesManager implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Received message");
         String version = header[0];
         String subProtocol = header[1];
         int senderId = Integer.parseInt(header[2]);
@@ -94,7 +93,7 @@ public class ReceivedMessagesManager implements Runnable {
     private void manageChunk(String version, int senderId, String fileId, int chunkNo, byte[] body) {
         if (senderId == PeerProtocol.getPeer().getPeer_id())
             return;
-        System.out.printf("Received message: %s CHUNK %d %s %d %d\n", version, senderId, fileId, chunkNo);
+        System.out.printf("Received message: %s CHUNK %d %s %d\n", version, senderId, fileId, chunkNo);
         String chunkKey = fileId+"-"+chunkNo;
         PeerProtocol.getPeer().getStorage().getRestoreChunks().putIfAbsent(chunkKey, body);
     }

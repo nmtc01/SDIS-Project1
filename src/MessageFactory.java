@@ -39,14 +39,11 @@ public class MessageFactory {
     //<Version> GETCHUNK <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
     public byte[] getChunkMsg(String version, int senderId, String fileId, int chunkNo) {
 
-        byte[] headerTerms = new byte[2];
-        headerTerms[0] = 0xD;
-        headerTerms[1] = 0xA;
-        this.messageString = version + " " + "GETCHUNK" + " " + senderId + " " + fileId + " " + chunkNo + " ";
-        byte[] header = this.messageString.getBytes();
-        byte[] getChunkMsg = new byte[header.length + headerTerms.length];
+        this.messageString = version + " " + "GETCHUNK" + " " + senderId + " " + fileId + " " + chunkNo;
+        String headerTerms = this.messageString + " \r\n\r\n";
+        byte[] header = headerTerms.getBytes();
+        byte[] getChunkMsg = new byte[header.length + header.length];
         System.arraycopy(header, 0, getChunkMsg, 0, header.length);
-        System.arraycopy(headerTerms, 0, getChunkMsg, header.length, headerTerms.length);
 
         return getChunkMsg;
     }
