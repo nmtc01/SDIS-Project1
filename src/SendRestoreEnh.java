@@ -1,12 +1,12 @@
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class SendRestoreEnh implements Runnable {
     private DatagramPacket packet;
     private int port;
+    private ServerSocket serverSocket;
+    private Socket clientSocket;
 
     SendRestoreEnh(DatagramPacket packet, int port) {
         this.packet = packet;
@@ -16,17 +16,19 @@ public class SendRestoreEnh implements Runnable {
     @Override
     public void run() {
         byte[] message = parsePacket(this.packet);
+        int port = 4444 + PeerProtocol.getPeer().getPeer_id();
+        System.out.println(port);
         try {
-            InetAddress host_name = InetAddress.getLocalHost();
-            //Create socket
-            Socket echoSocket = new Socket(host_name, this.port);
-            PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+            this.serverSocket = new ServerSocket(port);
+            this.clientSocket = this.serverSocket.accept();
+
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
             //Send
             out.println(message);
         }
-        catch (Exception e){
-            System.out.println(e.toString());
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
