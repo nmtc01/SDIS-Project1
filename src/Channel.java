@@ -46,4 +46,12 @@ public class Channel implements Runnable {
             e.printStackTrace();
         }
     }
+
+    public InetAddress getGroup() {
+        return this.group;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
 }
