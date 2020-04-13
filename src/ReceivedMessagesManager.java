@@ -73,6 +73,8 @@ public class ReceivedMessagesManager implements Runnable {
         Storage peerStorage = PeerProtocol.getPeer().getStorage();
         String chunkKey = fileId+"-"+chunkNo;
         peerStorage.incrementChunkOccurences(chunkKey);
+        if (!version.equals("1.0"))
+            peerStorage.addPeerToFile(fileId, senderId);
         System.out.printf("Received message: %s STORED %d %s %d\n", version, senderId, fileId, chunkNo);
     }
 
