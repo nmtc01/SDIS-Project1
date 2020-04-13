@@ -41,7 +41,7 @@ public class ReceivedMessagesManager implements Runnable {
                 manageChunk(version, senderId, fileId, chunkNo, body);
                 break;
             case "REMOVED":
-                manageRemoved();
+                manageRemoved(version, senderId, fileId, chunkNo);
                 break;
             default:
                 break;
@@ -79,8 +79,17 @@ public class ReceivedMessagesManager implements Runnable {
         System.out.printf("Received message: %s STORED %d %s %d\n", version, senderId, fileId, chunkNo);
     }
 
-    private void manageRemoved() {
-
+    private void manageRemoved(String version, int senderId, String fileId, int chunkNo) {
+        if (senderId == PeerProtocol.getPeer().getPeer_id())
+            return;
+        System.out.printf("Received message: %s REMOVED %d %s %d\n", version, senderId, fileId, chunkNo);
+        Random random = new Random();
+        int random_value = random.nextInt(401);
+        //TODO
+        String chunkKey = fileId +"-"+chunkNo;
+        PeerProtocol.getPeer().getStorage().decrementChunkOccurences(chunkKey);
+        ReceivedRemoved receivedRemoved = new ReceivedRemoved(version, fileId, chunkNo);
+        PeerProtocol.getThreadExecutor().schedule(receivedRemoved, random_value, TimeUnit.MILLISECONDS);
     }
 
     private void manageGetChunk(String version, int senderId, String fileId, int chunkNo) {

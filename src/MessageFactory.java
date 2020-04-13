@@ -80,15 +80,11 @@ public class MessageFactory {
         String version = PeerProtocol.getProtocol_version();
         String fileId = chunk.getFile_id();
         int chunkNo = chunk.getChunk_no();
-        byte[] headerTerms = new byte[2];
-        headerTerms[0] = 0xD;
-        headerTerms[1] = 0xA;
         this.messageString = version + " " + "REMOVED" + " " + senderId + " " + fileId + " " + chunkNo;
         String reclaimString = this.messageString + " \r\n\r\n";
         byte[] header = reclaimString.getBytes();
-        byte[] reclaimMsg = new byte[header.length + headerTerms.length];
+        byte[] reclaimMsg = new byte[header.length];
         System.arraycopy(header, 0, reclaimMsg, 0, header.length);
-        System.arraycopy(headerTerms, 0, reclaimMsg, header.length, headerTerms.length);
 
         return reclaimMsg;
     }
