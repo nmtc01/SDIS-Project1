@@ -5,22 +5,27 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class ReceiveRestoreEnh implements Runnable {
-    private int senderId;
     private String fileId;
     private int chunkNo;
+    private ServerSocket serverSocket;
+    private Socket clientSocket;
 
-    public ReceiveRestoreEnh(int senderId, String fileId, int chunkNo) {
-        this.senderId = senderId;
+    public ReceiveRestoreEnh(String fileId, int chunkNo) {;
         this.fileId = fileId;
         this.chunkNo = chunkNo;
+        try {
+            this.serverSocket = new ServerSocket(PeerProtocol.getPeer().getMDRChannel().getPort());
+            this.clientSocket = this.serverSocket.accept();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
         try {
-            ServerSocket serverSocket = new ServerSocket(PeerProtocol.getPeer().getMDRChannel().getPort());
-            Socket clientSocket = serverSocket.accept();
-            DataInputStream in = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+            DataInputStream in = new DataInputStream(new BufferedInputStream(this.clientSocket.getInputStream()));
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             byte[] body = new byte[64000]; // or 4096, or more
