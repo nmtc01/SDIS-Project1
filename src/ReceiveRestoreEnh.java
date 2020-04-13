@@ -13,8 +13,9 @@ public class ReceiveRestoreEnh implements Runnable {
     public ReceiveRestoreEnh(String fileId, int chunkNo) {;
         this.fileId = fileId;
         this.chunkNo = chunkNo;
+        int port = 4444 + PeerProtocol.getPeer().getPeer_id();
         try {
-            this.serverSocket = new ServerSocket(PeerProtocol.getPeer().getMDRChannel().getPort());
+            this.serverSocket = new ServerSocket(port);
             this.clientSocket = this.serverSocket.accept();
         }
         catch (IOException e) {
