@@ -151,7 +151,7 @@ public class Peer implements PeerInterface{
         ArrayList<Chunk> chunks = this.storage.getStoredChunks();
 
         if (chunks.isEmpty()) {
-            return "Impossible to reclaim space.";
+            return "Impossible to reclaim space";
         }
 
         double tmpSpace = spaceUsed - spaceClaimed;

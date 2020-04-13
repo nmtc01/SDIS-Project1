@@ -137,7 +137,7 @@ public class Storage implements java.io.Serializable {
             Chunk chunk = chunkIterator.next();
 
             if (chunk.getFile_id().equals(fileId)) {
-                String file_path = directory.getPath() + "/file" + chunk.getFile_id();
+                String file_path = directory.getPath() + "/file" + chunk.getFile_id() + "/chunk" + chunk.getChunk_no();
                 File file = new File(file_path);
                 file.delete();
 
@@ -146,7 +146,7 @@ public class Storage implements java.io.Serializable {
                 chunkIterator.remove();
             }
         }
-        String fileFolder = directory.getPath();
+        String fileFolder = directory.getPath() + "/file" + fileId;
         File folder = new File(fileFolder);
         folder.delete();
     }
@@ -234,7 +234,7 @@ public class Storage implements java.io.Serializable {
     }
 
     public void deleteChunk(Chunk chunk) {
-        String file_path = directory.getPath() + "/file" + chunk.getFile_id();
+        String file_path = directory.getPath() + "/file" + chunk.getFile_id() + "/chunk" + chunk.getChunk_no();
         File file = new File(file_path);
         file.delete();
     }
