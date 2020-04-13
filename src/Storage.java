@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Storage implements java.io.Serializable {
     private double free_space;
     private double space_used;
+
     private File directory;
     private boolean isUnix = true;
     private ArrayList<FileInfo> storedFiles = new ArrayList<>();
@@ -274,6 +275,10 @@ public class Storage implements java.io.Serializable {
 
     public ConcurrentHashMap<String, byte[]> getRestoreChunks() {
         return restoreChunks;
+    }
+
+    public File getDirectory() {
+        return this.directory;
     }
 
     public class ChunkKeyComparator implements Comparator<String> {

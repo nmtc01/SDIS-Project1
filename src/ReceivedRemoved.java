@@ -24,7 +24,13 @@ public class ReceivedRemoved implements Runnable{
 
         String chunkKey = fileId +"-" + chunkNo;
         if (storage.getChunkCurrentDegree(chunkKey) < desiredReplicationDegree) {
-            //TODO PUTCHUNK
+            String filepath = PeerProtocol.getPeer().getStorage().getDirectory().getPath() + "/file" + fileId + "/chunk" + chunkNo;
+            FileInfo file = new FileInfo(filepath);
+            file.prepareChunks(desiredReplicationDegree);
+
+            //TODO MESSAGE
+
+
         }
     }
 }
