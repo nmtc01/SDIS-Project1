@@ -239,6 +239,12 @@ public class Storage implements java.io.Serializable {
         file.delete();
     }
 
+    public void deleteFile(String path) {
+        String file_path = this.directory.getPath() + path;
+        File file = new File(file_path);
+        file.delete();
+    }
+
     public ArrayList<FileInfo> getStoredFiles() {
         return this.storedFiles;
     }

@@ -11,5 +11,6 @@ public class ReceivedDelete implements Runnable {
     public void run() {
         Storage peerStorage = PeerProtocol.getPeer().getStorage();
         //TODO delete dos chunks do file aqui
+        peerStorage.deleteChunk(fileId);
     }
 }

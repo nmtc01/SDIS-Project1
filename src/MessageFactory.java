@@ -65,15 +65,11 @@ public class MessageFactory {
 
         String version = PeerProtocol.getProtocol_version();
         String fileId = chunk.getFile_id();
-        byte[] headerTerms = new byte[2];
-        headerTerms[0] = 0xD;
-        headerTerms[1] = 0xA;
         this.messageString = version + " " + "DELETE" + " " + senderId + " " + fileId;
         String deleteString = this.messageString + " \r\n\r\n";
         byte[] header = deleteString.getBytes();
-        byte[] deleteMsg = new byte[header.length + headerTerms.length];
+        byte[] deleteMsg = new byte[header.length];
         System.arraycopy(header, 0, deleteMsg, 0, header.length);
-        System.arraycopy(headerTerms, 0, deleteMsg, header.length, headerTerms.length);
 
         return deleteMsg;
     }

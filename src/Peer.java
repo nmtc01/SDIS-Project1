@@ -132,11 +132,12 @@ public class Peer implements PeerInterface{
                 file_exists = true;
 
                 //TODO: delete do file do initiator peer here
+                this.storage.deleteFile(file_path);
 
                 //Get previously backed up file
                 fileInfo = this.storage.getStoredFiles().get(i);
                 //Get file chunks
-                Set<Chunk> chunks = this.storage.getStoredFiles().get(i).getChunks();
+                Set<Chunk> chunks = fileInfo.getChunks();
                 Iterator<Chunk> chunkIterator = chunks.iterator();
                 //For each chunk
                 while (chunkIterator.hasNext()) {
@@ -144,10 +145,10 @@ public class Peer implements PeerInterface{
                     //Prepare message to send
                     MessageFactory messageFactory = new MessageFactory();
                     //TODO prepare message her with messageFactory
-
+                    byte msg[] = messageFactory.deleteMsg(chunk, this.peer_id);
                     //Send message
-                    //DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
-                    //new Thread(new SendMessagesManager(sendPacket)).start();
+                    DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+                    new Thread(new SendMessagesManager(sendPacket)).start();
                     String messageString = messageFactory.getMessageString();
                     System.out.printf("Sent message: %s\n", messageString);
                 }

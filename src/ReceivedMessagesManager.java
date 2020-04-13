@@ -16,7 +16,10 @@ public class ReceivedMessagesManager implements Runnable {
         String subProtocol = header[1];
         int senderId = Integer.parseInt(header[2]);
         String fileId = header[3];
-        int chunkNo = Integer.parseInt(header[4]);
+        int chunkNo = 0;
+        if (header.length == 5) {
+            chunkNo = Integer.parseInt(header[4]);
+        }
         int repDeg = 0;
         if (header.length == 6)
             repDeg = Integer.parseInt(header[5]);
