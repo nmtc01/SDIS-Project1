@@ -105,12 +105,10 @@ public class Peer implements PeerInterface{
                     //Prepare message to send
                     MessageFactory messageFactory = new MessageFactory();
                     byte[] msg = messageFactory.getChunkMsg(PeerProtocol.getProtocol_version(), this.peer_id, fileInfo.getFileId(), chunk.getChunk_no());
-
-                    //Send message
-                    DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
-                    new Thread(new SendMessagesManager(sendPacket)).start();
                     String messageString = messageFactory.getMessageString();
-                    System.out.printf("Sent message: %s\n", messageString);
+                    if (PeerProtocol.getProtocol_version().equals("1.0"))
+                        sendCommonRestore(messageString, msg);
+                    else sendEnhRestore(messageString, msg);
                 }
                 while (fileInfo.getChunks().size() != this.storage.getRestoreChunks().size()) {}
                 new Thread(new RestoreChunks(file)).start();
@@ -121,6 +119,20 @@ public class Peer implements PeerInterface{
         if (file_exists)
             return "Restore successful";
         else return "File was not backed up previously";
+    }
+
+    public synchronized void sendCommonRestore(String messageString, byte[] msg) {
+        //Send message
+        DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+        new Thread(new SendMessagesManager(sendPacket)).start();
+        System.out.printf("Sent message: %s\n", messageString);
+    }
+
+    public synchronized void sendEnhRestore(String messageString, byte[] msg) {
+        //Send message
+        DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+        new Thread(new SendRestoreEnh(sendPacket)).start();
+        System.out.printf("Sent message: %s\n", messageString);
     }
 
     @Override
