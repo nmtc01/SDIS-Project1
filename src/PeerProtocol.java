@@ -62,8 +62,9 @@ public class PeerProtocol {
 
         //Parse protocol version
         protocol_version = args[0];
-        if (protocol_version.length() != 3) {
+        if (protocol_version.length() != 3 || (!protocol_version.equals("1.0") && !protocol_version.equals("2.0"))) {
             System.out.println("Version in format <n>.<m>");
+            System.out.println("Ony versions 1.0 or 2.0 admitted");
             return false;
         }
         //Parse peer id

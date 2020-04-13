@@ -1,3 +1,6 @@
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class MessageFactory {
     private String messageString;
 
@@ -63,10 +66,14 @@ public class MessageFactory {
     //<Version> CHUNKENH <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
     public byte[] chunkEnhMsg(String version, int senderId, String fileId, int chunkNo) {
         this.messageString = version + " " + "CHUNKENH" + " " + senderId + " " + fileId + " " + chunkNo;
-        String headerTerms = this.messageString + " \r\n\r\n";
-        byte[] header = headerTerms.getBytes();
-
-        return header;
+        try {
+            String headerTerms = this.messageString + " \r\n\r\n" + InetAddress.getLocalHost().getHostAddress();
+            byte[] header = headerTerms.getBytes();
+            return header;
+        }catch (UnknownHostException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     //<Version> DELETE <SenderId> <FileId> <CRLF><CRLF>

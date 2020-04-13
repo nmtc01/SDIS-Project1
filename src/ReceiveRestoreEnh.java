@@ -1,22 +1,23 @@
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.Arrays;
 
 public class ReceiveRestoreEnh implements Runnable {
     private String fileId;
     private int chunkNo;
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
+    private String address;
+    private int port;
+    private Socket echoSocket;
 
-    public ReceiveRestoreEnh(String fileId, int chunkNo) {;
+    public ReceiveRestoreEnh(String fileId, int chunkNo, String address) {;
         this.fileId = fileId;
         this.chunkNo = chunkNo;
-        int port = 4444 + PeerProtocol.getPeer().getPeer_id();
+        this.address = address;
+        this.port = 4444+PeerProtocol.getPeer().getPeer_id();
+        System.out.println(port);
         try {
-            this.serverSocket = new ServerSocket(port);
-            this.clientSocket = this.serverSocket.accept();
+            InetAddress host_name = InetAddress.getByName(this.address);
+            this.echoSocket = new Socket(host_name, this.port);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -26,7 +27,7 @@ public class ReceiveRestoreEnh implements Runnable {
     @Override
     public void run() {
         try {
-            DataInputStream in = new DataInputStream(new BufferedInputStream(this.clientSocket.getInputStream()));
+            DataInputStream in = new DataInputStream(new BufferedInputStream(this.echoSocket.getInputStream()));
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             byte[] body = new byte[64000]; // or 4096, or more
