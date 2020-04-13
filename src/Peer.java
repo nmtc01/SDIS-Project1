@@ -1,3 +1,4 @@
+import java.io.File;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -124,18 +125,40 @@ public class Peer implements PeerInterface{
 
     @Override
     public synchronized String delete(String file_path) {
-        FileInfo file = new FileInfo(file_path);
-        String fileId = "";
+        boolean file_exists = false;
+        FileInfo fileInfo;
+        for (int i = 0; i < this.storage.getStoredFiles().size(); i++) {
+            if (this.storage.getStoredFiles().get(i).getFile().getName().equals(file_path)) {
+                file_exists = true;
 
-        try {
-            fileId = file.generateFileID();
-        } catch (Exception e) {
-            e.printStackTrace();
+                //TODO: delete do file do initiator peer here
+
+                //Get previously backed up file
+                fileInfo = this.storage.getStoredFiles().get(i);
+                //Get file chunks
+                Set<Chunk> chunks = this.storage.getStoredFiles().get(i).getChunks();
+                Iterator<Chunk> chunkIterator = chunks.iterator();
+                //For each chunk
+                while (chunkIterator.hasNext()) {
+                    Chunk chunk = chunkIterator.next();
+                    //Prepare message to send
+                    MessageFactory messageFactory = new MessageFactory();
+                    //TODO prepare message her with messageFactory
+
+                    //Send message
+                    //DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+                    //new Thread(new SendMessagesManager(sendPacket)).start();
+                    String messageString = messageFactory.getMessageString();
+                    System.out.printf("Sent message: %s\n", messageString);
+                }
+
+                break;
+            }
         }
 
-        this.storage.deleteChunk(fileId);
-
-        return "Delete successful";
+        if (file_exists)
+            return "Delete successful";
+        else return "File does not exist";
     }
 
     @Override
