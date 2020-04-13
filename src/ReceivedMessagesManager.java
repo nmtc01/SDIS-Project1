@@ -102,5 +102,9 @@ public class ReceivedMessagesManager implements Runnable {
         if (senderId == PeerProtocol.getPeer().getPeer_id())
             return;
         System.out.printf("Received message: %s DELETE %d %s\n", version, senderId, fileId);
+        Random random = new Random();
+        int random_value = random.nextInt(401);
+        ReceivedDelete receivedDelete = new ReceivedDelete(version, fileId, chunkNo, repDeg, body);
+        PeerProtocol.getThreadExecutor().schedule(receivedDelete, random_value, TimeUnit.MILLISECONDS);
     }
 }
