@@ -116,7 +116,6 @@ public class ReceivedMessagesManager implements Runnable {
         if (senderId == PeerProtocol.getPeer().getPeer_id())
             return;
         System.out.printf("Received message: %s CHUNK %d %s %d\n", version, senderId, fileId, chunkNo);
-        new Thread(new ReceiveRestoreEnh(senderId, fileId, chunkNo)).start();
     }
 
     private void manageDelete(String version, int senderId, String fileId) {

@@ -111,6 +111,10 @@ public class Peer implements PeerInterface{
                     DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
                     new Thread(new SendMessagesManager(sendPacket)).start();
                     System.out.printf("Sent message: %s\n", messageString);
+
+                    if (!PeerProtocol.getProtocol_version().equals("1.0")) {
+                        new Thread(new ReceiveRestoreEnh(fileInfo.getFileId(), chunk.getChunk_no())).start();
+                    }
                 }
                 while (fileInfo.getChunks().size() != this.storage.getRestoreChunks().size()) {}
                 new Thread(new RestoreChunks(file)).start();
@@ -121,10 +125,6 @@ public class Peer implements PeerInterface{
         if (file_exists)
             return "Restore successful";
         else return "File was not backed up previously";
-    }
-
-    public synchronized void sendCommonRestore(String messageString, byte[] msg) {
-
     }
 
     @Override
