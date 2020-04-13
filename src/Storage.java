@@ -200,6 +200,12 @@ public class Storage implements java.io.Serializable {
         }
     }
 
+    public void decrementChunkOccurences(String key) {
+        if (this.chunks_current_degrees.containsKey(key) && this.chunks_current_degrees.get(key) != 0) {
+            this.chunks_current_degrees.replace(key, this.chunks_current_degrees.get(key) - 1);
+        }
+    }
+
     public int getChunkCurrentDegree(String chunkKey) {
         if (this.chunks_current_degrees.containsKey(chunkKey))
             return this.chunks_current_degrees.get(chunkKey);
