@@ -40,6 +40,9 @@ public class ReceivedMessagesManager implements Runnable {
             case "CHUNK":
                 manageChunk(version, senderId, fileId, chunkNo, body);
                 break;
+            case "CHUNKENH":
+                manageChunkEnh(version, senderId, fileId, chunkNo);
+                break;
             case "REMOVED":
                 manageRemoved(version, senderId, fileId, chunkNo);
                 break;
@@ -76,8 +79,6 @@ public class ReceivedMessagesManager implements Runnable {
         Storage peerStorage = PeerProtocol.getPeer().getStorage();
         String chunkKey = fileId+"-"+chunkNo;
         peerStorage.incrementChunkOccurences(chunkKey);
-        if (!version.equals("1.0"))
-            peerStorage.addPeerToFile(fileId, senderId);
         System.out.printf("Received message: %s STORED %d %s %d\n", version, senderId, fileId, chunkNo);
     }
 
@@ -109,6 +110,13 @@ public class ReceivedMessagesManager implements Runnable {
         System.out.printf("Received message: %s CHUNK %d %s %d\n", version, senderId, fileId, chunkNo);
         String chunkKey = fileId+"-"+chunkNo;
         PeerProtocol.getPeer().getStorage().getRestoreChunks().putIfAbsent(chunkKey, body);
+    }
+
+    private void manageChunkEnh(String version, int senderId, String fileId, int chunkNo) {
+        if (senderId == PeerProtocol.getPeer().getPeer_id())
+            return;
+        System.out.printf("Received message: %s CHUNK %d %s %d\n", version, senderId, fileId, chunkNo);
+        new Thread(new ReceiveRestoreEnh(senderId, fileId, chunkNo)).start();
     }
 
     private void manageDelete(String version, int senderId, String fileId) {

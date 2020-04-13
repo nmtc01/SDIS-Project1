@@ -106,9 +106,11 @@ public class Peer implements PeerInterface{
                     MessageFactory messageFactory = new MessageFactory();
                     byte[] msg = messageFactory.getChunkMsg(PeerProtocol.getProtocol_version(), this.peer_id, fileInfo.getFileId(), chunk.getChunk_no());
                     String messageString = messageFactory.getMessageString();
-                    if (PeerProtocol.getProtocol_version().equals("1.0"))
-                        sendCommonRestore(messageString, msg);
-                    else sendEnhRestore(messageString, msg);
+
+                    //Send message
+                    DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+                    new Thread(new SendMessagesManager(sendPacket)).start();
+                    System.out.printf("Sent message: %s\n", messageString);
                 }
                 while (fileInfo.getChunks().size() != this.storage.getRestoreChunks().size()) {}
                 new Thread(new RestoreChunks(file)).start();
@@ -122,17 +124,7 @@ public class Peer implements PeerInterface{
     }
 
     public synchronized void sendCommonRestore(String messageString, byte[] msg) {
-        //Send message
-        DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
-        new Thread(new SendMessagesManager(sendPacket)).start();
-        System.out.printf("Sent message: %s\n", messageString);
-    }
 
-    public synchronized void sendEnhRestore(String messageString, byte[] msg) {
-        //Send message
-        DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
-        new Thread(new SendRestoreEnh(sendPacket)).start();
-        System.out.printf("Sent message: %s\n", messageString);
     }
 
     @Override
