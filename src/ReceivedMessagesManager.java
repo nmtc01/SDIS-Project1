@@ -85,7 +85,6 @@ public class ReceivedMessagesManager implements Runnable {
         System.out.printf("Received message: %s REMOVED %d %s %d\n", version, senderId, fileId, chunkNo);
         Random random = new Random();
         int random_value = random.nextInt(401);
-        //TODO
         String chunkKey = fileId +"-"+chunkNo;
         PeerProtocol.getPeer().getStorage().decrementChunkOccurences(chunkKey);
         ReceivedRemoved receivedRemoved = new ReceivedRemoved(version, fileId, chunkNo);
