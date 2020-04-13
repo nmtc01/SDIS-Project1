@@ -144,6 +144,7 @@ public class Storage implements java.io.Serializable {
                 free_space += chunk.getChunk_size();
 
                 chunkIterator.remove();
+                decrementChunkOccurences(chunk.getFile_id()+"-"+chunk.getChunk_no());
             }
         }
         String fileFolder = directory.getPath() + "/file" + fileId;
@@ -243,12 +244,28 @@ public class Storage implements java.io.Serializable {
         String file_path = directory.getPath() + "/file" + chunk.getFile_id() + "/chunk" + chunk.getChunk_no();
         File file = new File(file_path);
         file.delete();
+        for (int i = 0; i < this.storedChunks.size(); i++) {
+            if (this.storedChunks.get(i).getFile_id().equals(chunk.getFile_id()) && this.storedChunks.get(i).getChunk_no() == chunk.getChunk_no()) {
+                this.storedChunks.remove(i);
+                break;
+            }
+        }
+        decrementChunkOccurences(chunk.getFile_id()+"-"+chunk.getChunk_no());
     }
 
-    public void deleteFile(String path) {
-        String file_path = this.directory.getPath() + path;
+    public void deleteFile(FileInfo fileInfo) {
+        String file_directory = this.directory.getPath() + "/file" + fileInfo.getFileId();
+        String file_path = file_directory + "/" + fileInfo.getFile().getName();
+        File fileFolder = new File(file_directory);
         File file = new File(file_path);
         file.delete();
+        fileFolder.delete();
+        for (int i = 0; i < this.storedFiles.size(); i++) {
+            if (this.storedFiles.get(i).getFileId().equals(fileInfo.getFileId())) {
+                this.storedFiles.remove(i);
+                break;
+            }
+        }
     }
 
     public ArrayList<FileInfo> getStoredFiles() {
