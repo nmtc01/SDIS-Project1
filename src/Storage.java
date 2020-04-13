@@ -235,10 +235,8 @@ public class Storage implements java.io.Serializable {
         return total_space;
     }
 
-    public void reclaimSpace(double spaceClaimed, double spaceUsed) {
-        this.total_space = spaceClaimed;
-        this.free_space = spaceClaimed - spaceUsed;
-        this.space_used = spaceUsed;
+    public void reclaimSpace(double free_space) {
+        this.free_space = free_space;
     }
 
     public void deleteChunk(Chunk chunk) {

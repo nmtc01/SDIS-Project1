@@ -167,54 +167,38 @@ public class Peer implements PeerInterface{
         double spaceUsed = this.storage.getOccupiedSpace();
         double spaceClaimed = max_space * 1000; //The client shall specify the maximum disk space in KBytes (1KByte = 1000 bytes)
 
-        if (spaceUsed <= spaceClaimed) {
-            this.storage.reclaimSpace(spaceClaimed, spaceUsed);
-        }
-
-        ArrayList<Chunk> chunks = this.storage.getStoredChunks();
-
-        if (chunks.isEmpty()) {
-            return "Impossible to reclaim space";
-        }
-
         double tmpSpace = spaceUsed - spaceClaimed;
 
-        Iterator<Chunk> chunkIterator = chunks.iterator();
+        if (tmpSpace > 0) {
+            //TODO REPLICATION DEGREE AND CHUNKS
+            double deletedSpace = 0;
 
-        do {
-            Chunk chunk = chunkIterator.next();
-            MessageFactory messageFactory = new MessageFactory();
-            byte msg[] = messageFactory.reclaimMsg(chunk, this.peer_id);
-            DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
-            new Thread(new SendMessagesManager(sendPacket)).start();
-            String messageString = messageFactory.getMessageString();
-            System.out.printf("Sent message: %s\n", messageString);
-            try {
-                Thread.sleep(500);
+            for (Iterator<Chunk> chunkIterator = this.storage.getStoredChunks().iterator(); chunkIterator.hasNext();) {
+                Chunk chunk = chunkIterator.next();
+                if (deletedSpace < tmpSpace) {
+                    deletedSpace += chunk.getChunk_size();
+
+                    MessageFactory messageFactory = new MessageFactory();
+                    byte msg[] = messageFactory.deleteMsg(chunk, this.peer_id);
+                    DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+                    new Thread(new SendMessagesManager(sendPacket)).start();
+                    String messageString = messageFactory.getMessageString();
+                    System.out.printf("Sent message: %s\n", messageString);
+
+                    //TODO REMOVE FILE
+
+                    String chunkKey = chunk.getFile_id() + "-" + chunk.getChunk_no();
+                    this.storage.decrementChunkOccurences(chunkKey);
+                    chunkIterator.remove();
+                }
+                else {
+                    break;
+                }
             }
-            catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            tmpSpace -= chunk.getChunk_size();
-            chunkIterator.remove();
-            this.storage.deleteChunk(chunk);
-        } while (tmpSpace > 0);
 
-        double totalSpaceOccupied = 0;
+            this.storage.reclaimSpace(tmpSpace);
 
-        for (Chunk chunk: chunks) {
-            totalSpaceOccupied += chunk.getChunk_size();
         }
-
-        if (totalSpaceOccupied == 0) {
-            for (Chunk chunk : chunks) {
-                this.storage.deleteChunk(chunk);
-            }
-
-            chunks.clear();
-        }
-
-        this.storage.reclaimSpace(spaceClaimed, totalSpaceOccupied);
 
         return "Reclaim successful";
     }
