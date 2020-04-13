@@ -17,7 +17,7 @@ public class ReceivedMessagesManager implements Runnable {
         int senderId = Integer.parseInt(header[2]);
         String fileId = header[3];
         int chunkNo = 0;
-        if (header.length == 5) {
+        if (header.length >= 5) {
             chunkNo = Integer.parseInt(header[4]);
         }
         int repDeg = 0;

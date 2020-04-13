@@ -131,9 +131,6 @@ public class Peer implements PeerInterface{
             if (this.storage.getStoredFiles().get(i).getFile().getName().equals(file_path)) {
                 file_exists = true;
 
-                //TODO: delete do file do initiator peer here
-                this.storage.deleteFile(file_path);
-
                 //Get previously backed up file
                 fileInfo = this.storage.getStoredFiles().get(i);
                 //Get file chunks
@@ -152,6 +149,8 @@ public class Peer implements PeerInterface{
                     String messageString = messageFactory.getMessageString();
                     System.out.printf("Sent message: %s\n", messageString);
                 }
+                //Delete file
+                this.storage.deleteFile(fileInfo);
 
                 break;
             }
