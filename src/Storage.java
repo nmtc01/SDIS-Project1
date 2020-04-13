@@ -14,7 +14,6 @@ public class Storage implements java.io.Serializable {
     private ArrayList<Chunk> storedChunks = new ArrayList<>();
     private ConcurrentHashMap<String, byte[]> restoreChunks = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Integer> chunks_current_degrees = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, ArrayList<Integer>> peersWithChunksOfFile = new ConcurrentHashMap<>();
     private double total_space;
 
     public Storage(int peer_id) {
@@ -246,17 +245,6 @@ public class Storage implements java.io.Serializable {
 
     public ConcurrentHashMap<String, byte[]> getRestoreChunks() {
         return restoreChunks;
-    }
-
-    public void addPeerToFile(String file, int peer_id) {
-        if (this.peersWithChunksOfFile.contains(file)) {
-            this.peersWithChunksOfFile.get(file).add(peer_id);
-        }
-        else {
-            ArrayList<Integer> peers = new ArrayList<>();
-            peers.add(peer_id);
-            this.peersWithChunksOfFile.put(file, peers);
-        }
     }
 
     public class ChunkKeyComparator implements Comparator<String> {

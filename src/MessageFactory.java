@@ -60,6 +60,15 @@ public class MessageFactory {
         return chunkMsg;
     }
 
+    //<Version> CHUNKENH <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
+    public byte[] chunkEnhMsg(String version, int senderId, String fileId, int chunkNo) {
+        this.messageString = version + " " + "CHUNKENH" + " " + senderId + " " + fileId + " " + chunkNo;
+        String headerTerms = this.messageString + " \r\n\r\n";
+        byte[] header = headerTerms.getBytes();
+
+        return header;
+    }
+
     //<Version> DELETE <SenderId> <FileId> <CRLF><CRLF>
     public byte[] deleteMsg(Chunk chunk, int senderId) {
 
