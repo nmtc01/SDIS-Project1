@@ -17,7 +17,7 @@ public class SendRestoreEnh implements Runnable {
     public void run() {
         byte[] message = parsePacket(this.packet);
         try {
-            this.serverSocket = new ServerSocket(port);
+            this.serverSocket = new ServerSocket(this.port);
             this.clientSocket = this.serverSocket.accept();
 
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
