@@ -187,7 +187,7 @@ public class Peer implements PeerInterface{
 
             while (chunkIterator.hasNext()) {
                 Chunk chunk = chunkIterator.next();
-                if (deletedSpace < tmpSpace) {
+                if (deletedSpace < tmpSpace || max_space == 0) {
                     deletedSpace += chunk.getChunk_size();
 
                     MessageFactory messageFactory = new MessageFactory();
