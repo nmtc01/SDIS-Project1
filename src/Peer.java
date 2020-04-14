@@ -200,7 +200,7 @@ public class Peer implements PeerInterface{
                 }
             }
 
-            this.storage.reclaimSpace(tmpSpace);
+            this.storage.reclaimSpace(max_space - this.storage.getOccupiedSpace());
 
         }
 

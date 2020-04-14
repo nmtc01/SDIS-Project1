@@ -234,7 +234,9 @@ public class Storage implements java.io.Serializable {
     }
 
     public double getOccupiedSpace() {
-        space_used = this.getTotalSpace() + free_space;
+        for (Chunk chunk : this.storedChunks) {
+            space_used += chunk.getChunk_size();
+        }
         return space_used;
     }
 
