@@ -2,6 +2,11 @@ public class Chunk implements java.io.Serializable{
     private String file_id;
     private Integer chunk_no;
     private Integer chunk_size;
+
+    public void setDesired_replication_degree(int desired_replication_degree) {
+        this.desired_replication_degree = desired_replication_degree;
+    }
+
     private int desired_replication_degree;
     private byte[] content;
 

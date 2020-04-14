@@ -248,7 +248,9 @@ public class Storage implements java.io.Serializable {
     }
 
     public double getOccupiedSpace() {
-        space_used = this.getTotalSpace() + free_space;
+        for (Chunk chunk : this.storedChunks) {
+            space_used += chunk.getChunk_size();
+        }
         return space_used;
     }
 
@@ -324,6 +326,13 @@ public class Storage implements java.io.Serializable {
                     return;
                 }
             }
+        }
+    }
+
+    public void setCurrentReplicationDegrees() {
+        for (Chunk chunk : this.storedChunks) {
+            String chunkKey = chunk.getFile_id() + "-" + chunk.getChunk_no();
+            chunk.setDesired_replication_degree(this.chunks_current_degrees.get(chunkKey));
         }
     }
 
