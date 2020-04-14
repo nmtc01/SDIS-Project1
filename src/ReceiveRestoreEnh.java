@@ -13,8 +13,7 @@ public class ReceiveRestoreEnh implements Runnable {
         this.fileId = fileId;
         this.chunkNo = chunkNo;
         this.address = address;
-        this.port = 4444+PeerProtocol.getPeer().getPeer_id();
-        System.out.println(port);
+        this.port = 4444+PeerProtocol.getPeer().getPeer_id()+chunkNo;
         try {
             InetAddress host_name = InetAddress.getByName(this.address);
             this.echoSocket = new Socket(host_name, this.port);
