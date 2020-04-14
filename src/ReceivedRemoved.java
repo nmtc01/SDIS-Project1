@@ -1,39 +1,41 @@
+import java.net.DatagramPacket;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+
 public class ReceivedRemoved implements Runnable{
-    private String version;
-    String fileId;
+    private int replication_degree;
+    private String filepath;
+    private String fileId;
     private int chunkNo;
 
-    public ReceivedRemoved(String version, String fileId, int chunkNo) {
-        this.version = version;
+    public ReceivedRemoved(String fileId, String filepath, int replication_degree, int chunkNo) {
+        this.replication_degree = replication_degree;
+        this.filepath = filepath;
         this.fileId = fileId;
         this.chunkNo = chunkNo;
     }
 
     @Override
     public void run() {
+        FileInfo file = new FileInfo(this.filepath);
+        file.prepareChunks(replication_degree);
+        Chunk chunk;
+        Iterator<Chunk> chunkIterator = file.getChunks().iterator();
+        while(chunkIterator.hasNext()) {
+            chunk = chunkIterator.next();
+            if (chunk.getFile_id().equals(fileId) && chunk.getChunk_no() == chunkNo) {
+                MessageFactory messageFactory = new MessageFactory();
+                byte msg[] = messageFactory.putChunkMsg(chunk, this.replication_degree, PeerProtocol.getPeer().getPeer_id());
+                DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+                new Thread(new SendMessagesManager(sendPacket)).start();
+                String messageString = messageFactory.getMessageString();
+                System.out.printf("Sent message: %s\n", messageString);
 
-        /*int desiredReplicationDegree = 0;
-        Storage storage = PeerProtocol.getPeer().getStorage();
-        for (int i = 0; i < storage.getStoredChunks().size(); i++) {
-            Chunk chunk = storage.getStoredChunks().get(i);
-            if (chunk.getFile_id().equals(fileId) && chunk.getChunk_no() == this.chunkNo) {
-                desiredReplicationDegree = chunk.getDesired_replication_degree();
-                break;
+                String chunkKey = chunk.getFile_id() + "-" + chunk.getChunk_no();
+                PutChunkAttempts putChunkAttempts = new PutChunkAttempts(1, 5, sendPacket, chunkKey, this.replication_degree, messageString);
+                PeerProtocol.getThreadExecutor().schedule(putChunkAttempts, 1, TimeUnit.SECONDS);
+                return;
             }
         }
-
-        String chunkKey = fileId +"-" + chunkNo;
-        if (storage.getChunkCurrentDegree(chunkKey) < desiredReplicationDegree) {
-            String filepath = PeerProtocol.getPeer().getStorage().getDirectory().getPath() + "/file" + fileId + "/chunk" + chunkNo;
-            FileInfo file = new FileInfo(filepath);
-            file.prepareChunks(desiredReplicationDegree);
-
-            //TODO MESSAGE
-
-            
-
-        }*/
-
-
     }
 }

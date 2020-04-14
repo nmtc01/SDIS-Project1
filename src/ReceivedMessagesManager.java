@@ -97,10 +97,18 @@ public class ReceivedMessagesManager implements Runnable {
         Random random = new Random();
         int random_value = random.nextInt(401);
         String chunkKey = fileId +"-"+chunkNo;
-        PeerProtocol.getPeer().getStorage().decrementChunkOccurences(chunkKey);
-        PeerProtocol.getPeer().getStorage().remove_peer_chunks(chunkKey, senderId);
-        ReceivedRemoved receivedRemoved = new ReceivedRemoved(version, fileId, chunkNo);
-        PeerProtocol.getThreadExecutor().schedule(receivedRemoved, random_value, TimeUnit.MILLISECONDS);
+        Storage peerStorage = PeerProtocol.getPeer().getStorage();
+        peerStorage.decrementChunkOccurences(chunkKey);
+        peerStorage.remove_peer_chunks(chunkKey, senderId);
+        for (int i = 0; i < peerStorage.getStoredFiles().size(); i++) {
+            FileInfo file = peerStorage.getStoredFiles().get(i);
+            if (file.getFileId().equals(fileId)) {
+                if (peerStorage.getChunkCurrentDegree(chunkKey) < file.getReplicationDegree()) {
+                    ReceivedRemoved receivedRemoved = new ReceivedRemoved(fileId, file.getFile().getName(), file.getReplicationDegree(), chunkNo);
+                    PeerProtocol.getThreadExecutor().schedule(receivedRemoved, random_value, TimeUnit.MILLISECONDS);
+                }
+            }
+        }
     }
 
     private void manageGetChunk(String version, int senderId, String fileId, int chunkNo) {
