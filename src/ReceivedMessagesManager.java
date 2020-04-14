@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +16,10 @@ public class ReceivedMessagesManager implements Runnable {
         String version = header[0];
         String subProtocol = header[1];
         int senderId = Integer.parseInt(header[2]);
-        String fileId = header[3];
+        String fileId = new String();
+        if (header.length >= 4) {
+            fileId = header[3];
+        }
         int chunkNo = 0;
         if (header.length >= 5) {
             chunkNo = Integer.parseInt(header[4]);
@@ -45,6 +49,9 @@ public class ReceivedMessagesManager implements Runnable {
                 break;
             case "REMOVED":
                 manageRemoved(version, senderId, fileId, chunkNo);
+                break;
+            case "AWAKE":
+                manageAwake(version, senderId);
                 break;
             default:
                 break;
@@ -79,6 +86,7 @@ public class ReceivedMessagesManager implements Runnable {
         Storage peerStorage = PeerProtocol.getPeer().getStorage();
         String chunkKey = fileId+"-"+chunkNo;
         peerStorage.incrementChunkOccurences(chunkKey);
+        peerStorage.add_peer_chunks(chunkKey, senderId);
         System.out.printf("Received message: %s STORED %d %s %d\n", version, senderId, fileId, chunkNo);
     }
 
@@ -130,5 +138,29 @@ public class ReceivedMessagesManager implements Runnable {
         int random_value = random.nextInt(401);
         ReceivedDelete receivedDelete = new ReceivedDelete(version, fileId);
         PeerProtocol.getThreadExecutor().schedule(receivedDelete, random_value, TimeUnit.MILLISECONDS);
+    }
+
+    private void manageAwake(String version, int senderId) {
+        if (senderId == PeerProtocol.getPeer().getPeer_id())
+            return;
+        System.out.printf("Received message: %s AWAKE %d\n", version, senderId);
+        Storage peerStorage = PeerProtocol.getPeer().getStorage();
+        ArrayList<FileInfo> deletedFiles = peerStorage.getDeletedFiles();
+
+        if (!peerStorage.getPeers_with_chunks().containsKey(senderId))
+            return;
+
+        ArrayList<String> keys = peerStorage.getPeers_with_chunks().get(senderId);
+        int deleted_size = deletedFiles.size();
+        int keys_size = keys.size();
+        for (int i = 0; i < deleted_size; i++) {
+            for (int j = 0; j < keys_size; j++) {
+                if (deletedFiles.get(i).getFileId().equals(keys.get(j).split("-")[0])){
+                    peerStorage.getStoredFiles().add(deletedFiles.get(i));
+                    PeerProtocol.getPeer().delete(deletedFiles.get(i).getFile().getName());
+                    break;
+                }
+            }
+        }
     }
 }

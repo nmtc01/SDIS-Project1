@@ -10,7 +10,6 @@ public class ReceivedDelete implements Runnable {
     @Override
     public void run() {
         Storage peerStorage = PeerProtocol.getPeer().getStorage();
-        //TODO delete dos chunks do file aqui
         peerStorage.deleteChunk(fileId);
     }
 }

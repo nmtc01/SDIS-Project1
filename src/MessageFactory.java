@@ -104,4 +104,14 @@ public class MessageFactory {
 
         return reclaimMsg;
     }
+
+    //<Version> AWAKE <SenderId> <CRLF><CRLF>
+    public byte[] awakeMsg(int senderId) {
+        String version = PeerProtocol.getProtocol_version();
+        this.messageString = version + " " + "AWAKE" + " " + senderId;
+        String deleteString = this.messageString + " \r\n\r\n";
+        byte[] awake = deleteString.getBytes();
+
+        return awake;
+    }
 }

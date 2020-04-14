@@ -15,11 +15,21 @@ public class Storage implements java.io.Serializable {
     private ArrayList<Chunk> storedChunks = new ArrayList<>();
     private ConcurrentHashMap<String, byte[]> restoreChunks = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Integer> chunks_current_degrees = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Integer, ArrayList<String>> peers_with_chunks = new ConcurrentHashMap<>();
+    private ArrayList<FileInfo> deletedFiles = new ArrayList<>();
     private double total_space;
 
     public Storage(int peer_id) {
         this.free_space = 1000000000;
         createPeerDirectory(peer_id);
+    }
+
+    public ArrayList<FileInfo> getDeletedFiles() {
+        return deletedFiles;
+    }
+
+    public ConcurrentHashMap<Integer, ArrayList<String>> getPeers_with_chunks() {
+        return this.peers_with_chunks;
     }
 
     private void createPeerDirectory(int peer_id) {
@@ -154,6 +164,7 @@ public class Storage implements java.io.Serializable {
 
                 chunkIterator.remove();
                 decrementChunkOccurences(chunk.getFile_id()+"-"+chunk.getChunk_no());
+                remove_peer_chunks(chunk.getFile_id()+"-"+chunk.getChunk_no(), PeerProtocol.getPeer().getPeer_id());
             }
         }
         String fileFolder = directory.getPath() + "/file" + fileId;
@@ -185,6 +196,9 @@ public class Storage implements java.io.Serializable {
 
         //Decrement free space
         decFreeSpace(chunk.getContent().length);
+
+        //Add to peers_with_chunks
+        add_peer_chunks(chunk.getFile_id()+"-"+chunk.getChunk_no(), PeerProtocol.getPeer().getPeer_id());
     }
 
     public void exportChunk(File directory, Chunk chunk) {
@@ -261,6 +275,7 @@ public class Storage implements java.io.Serializable {
             }
         }
         decrementChunkOccurences(chunk.getFile_id()+"-"+chunk.getChunk_no());
+        remove_peer_chunks(chunk.getFile_id()+"-"+chunk.getChunk_no(), PeerProtocol.getPeer().getPeer_id());
     }
 
     public void deleteFile(FileInfo fileInfo) {
@@ -288,6 +303,28 @@ public class Storage implements java.io.Serializable {
 
     public File getDirectory() {
         return this.directory;
+    }
+
+    public void add_peer_chunks(String chunkKey, int peer_id) {
+        if (this.peers_with_chunks.containsKey(peer_id)) {
+            this.peers_with_chunks.get(peer_id).add(chunkKey);
+        }
+        else {
+            ArrayList<String> chunks = new ArrayList<>();
+            chunks.add(chunkKey);
+            this.peers_with_chunks.put(peer_id, chunks);
+        }
+    }
+
+    public void remove_peer_chunks(String chunkKey, int peer_id) {
+        if (this.peers_with_chunks.containsKey(peer_id)) {
+            for (int i = 0; i < this.peers_with_chunks.get(peer_id).size(); i++) {
+                if (this.peers_with_chunks.get(peer_id).get(i).equals(chunkKey)) {
+                    this.peers_with_chunks.get(peer_id).remove(i);
+                    return;
+                }
+            }
+        }
     }
 
     public class ChunkKeyComparator implements Comparator<String> {

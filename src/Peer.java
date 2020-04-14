@@ -15,6 +15,10 @@ public class Peer implements PeerInterface{
         this.peer_id = peer_id;
         this.channels = channels;
         executeChannels();
+
+        //I'm awake
+        if (!PeerProtocol.getProtocol_version().equals("1.0"))
+            awoke();
     }
 
     public void executeChannels() {
@@ -22,6 +26,13 @@ public class Peer implements PeerInterface{
         for (int i = 0; i < 3; i++) {
             PeerProtocol.getThreadExecutor().execute(channels[i]);
         }
+    }
+
+    public void awoke() {
+        MessageFactory messageFactory = new MessageFactory();
+        byte msg[] = messageFactory.awakeMsg(this.peer_id);
+        DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
+        new Thread(new SendMessagesManager(sendPacket)).start();
     }
 
     public void initiateStorage() {
@@ -133,6 +144,7 @@ public class Peer implements PeerInterface{
 
                 //Get previously backed up file
                 fileInfo = this.storage.getStoredFiles().get(i);
+                this.storage.getDeletedFiles().add(fileInfo);
                 //Get file chunks
                 Set<Chunk> chunks = fileInfo.getChunks();
                 Iterator<Chunk> chunkIterator = chunks.iterator();
@@ -141,7 +153,6 @@ public class Peer implements PeerInterface{
                     Chunk chunk = chunkIterator.next();
                     //Prepare message to send
                     MessageFactory messageFactory = new MessageFactory();
-                    //TODO prepare message her with messageFactory
                     byte msg[] = messageFactory.deleteMsg(chunk, this.peer_id);
                     //Send message
                     DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);

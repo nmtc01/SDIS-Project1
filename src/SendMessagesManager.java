@@ -32,6 +32,9 @@ public class SendMessagesManager implements Runnable {
             case "REMOVED":
                 manageRemoved(message);
                 break;
+            case "AWAKE":
+                manageAwake(message);
+                break;
             default:
                 break;
         }
@@ -68,6 +71,10 @@ public class SendMessagesManager implements Runnable {
     }
 
     private void manageDelete(byte[] message) {
+        PeerProtocol.getPeer().getMCChannel().send(message);
+    }
+
+    private void manageAwake(byte[] message) {
         PeerProtocol.getPeer().getMCChannel().send(message);
     }
 }
