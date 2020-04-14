@@ -329,13 +329,6 @@ public class Storage implements java.io.Serializable {
         }
     }
 
-    public void setCurrentReplicationDegrees() {
-        for (Chunk chunk : this.storedChunks) {
-            String chunkKey = chunk.getFile_id() + "-" + chunk.getChunk_no();
-            chunk.setDesired_replication_degree(this.chunks_current_degrees.get(chunkKey));
-        }
-    }
-
     public class ChunkKeyComparator implements Comparator<String> {
 
         @Override

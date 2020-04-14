@@ -177,17 +177,15 @@ public class Peer implements PeerInterface{
     public synchronized String reclaim(Integer max_space) {
 
         double spaceUsed = this.storage.getOccupiedSpace();
-        double spaceClaimed = max_space * 1000; //The client shall specify the maximum disk space in KBytes (1KByte = 1000 bytes)
+        double spaceClaimed = max_space; //The client shall specify the maximum disk space in KBytes (1KByte = 1000 bytes)
 
         double tmpSpace = spaceUsed - spaceClaimed;
 
         if (tmpSpace > 0) {
-            //TODO REPLICATION DEGREE AND CHUNKS
-            this.storage.setCurrentReplicationDegrees();
-            this.storage.getStoredChunks().sort(Collections.reverseOrder());
             double deletedSpace = 0;
+            Iterator<Chunk> chunkIterator = this.storage.getStoredChunks().iterator();
 
-            for (Iterator<Chunk> chunkIterator = this.storage.getStoredChunks().iterator(); chunkIterator.hasNext();) {
+            while (chunkIterator.hasNext()) {
                 Chunk chunk = chunkIterator.next();
                 if (deletedSpace < tmpSpace) {
                     deletedSpace += chunk.getChunk_size();
