@@ -16,8 +16,6 @@ public class SendRestoreEnh implements Runnable {
     @Override
     public void run() {
         byte[] message = parsePacket(this.packet);
-        int port = 4444 + PeerProtocol.getPeer().getPeer_id();
-        System.out.println(port);
         try {
             this.serverSocket = new ServerSocket(port);
             this.clientSocket = this.serverSocket.accept();
