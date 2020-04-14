@@ -191,7 +191,7 @@ public class Peer implements PeerInterface{
                     deletedSpace += chunk.getChunk_size();
 
                     MessageFactory messageFactory = new MessageFactory();
-                    byte msg[] = messageFactory.deleteMsg(chunk, this.peer_id);
+                    byte msg[] = messageFactory.reclaimMsg(chunk, this.peer_id);
                     DatagramPacket sendPacket = new DatagramPacket(msg, msg.length);
                     new Thread(new SendMessagesManager(sendPacket)).start();
                     String messageString = messageFactory.getMessageString();
