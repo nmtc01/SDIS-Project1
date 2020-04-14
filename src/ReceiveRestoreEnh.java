@@ -30,12 +30,14 @@ public class ReceiveRestoreEnh implements Runnable {
             DataInputStream in = new DataInputStream(new BufferedInputStream(this.echoSocket.getInputStream()));
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            byte[] body = new byte[64000]; // or 4096, or more
+            byte[] body = new byte[64000];
             int count;
-            while ((count = in.read(body)) > 0)
+            while (in.available()>0)
             {
+                count = in.read(body);
                 out.write(body, 0, count);
             }
+            out.close();
             PeerProtocol.getPeer().getStorage().getRestoreChunks().putIfAbsent(this.fileId+"-"+this.chunkNo, body);
         }
         catch (IOException e) {
