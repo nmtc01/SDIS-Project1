@@ -47,7 +47,7 @@ public class ReceivedGetChunk implements Runnable {
         DatagramPacket bodyPacket = new DatagramPacket(chunk.getContent(), chunk.getContent().length);
         String key = this.fileId+"-"+this.chunkNo;
         if (!PeerProtocol.getPeer().getStorage().getRestoreChunks().containsKey(key)) {
-            int port = 4444 + PeerProtocol.getPeer().getPeer_id() + this.chunkNo;
+            int port = 4444 + PeerProtocol.getPeer().getPeer_id() + this.chunkNo + Integer.valueOf(fileId.charAt(0));
             new Thread(new SendRestoreEnh(bodyPacket, port)).start();
             System.out.printf("Sent enhanced message: %s\n", messageFactory.getMessageString());
         }
