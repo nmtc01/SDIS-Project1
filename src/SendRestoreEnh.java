@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.*;
 
@@ -20,10 +21,12 @@ public class SendRestoreEnh implements Runnable {
             this.serverSocket = new ServerSocket(this.port);
             this.clientSocket = this.serverSocket.accept();
 
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 
             //Send
-            out.println(message);
+            out.flush();
+            out.write(message);
+            out.close();
         }
         catch (IOException e) {
             e.printStackTrace();
