@@ -42,7 +42,6 @@ public class ReceivedGetChunk implements Runnable {
         String chunkKey = this.fileId+"-"+this.chunkNo;
         if (!PeerProtocol.getPeer().getStorage().getRestoreChunks().containsKey(chunkKey)) {
             new Thread(new SendMessagesManager(headerPacket)).start();
-            System.out.printf("Sent message: %s\n", messageFactory.getMessageString());
         }
 
         DatagramPacket bodyPacket = new DatagramPacket(chunk.getContent(), chunk.getContent().length);

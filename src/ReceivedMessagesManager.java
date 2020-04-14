@@ -98,11 +98,11 @@ public class ReceivedMessagesManager implements Runnable {
             return;
         if (version.equals("1.0"))
             System.out.printf("Received message: %s CHUNK %d %s %d\n", version, senderId, fileId, chunkNo);
-        else System.out.printf("Received message: %s CHUNKENH %d %s %d\n", version, senderId, fileId, chunkNo);
+        else System.out.printf("Received enhanced message: %s CHUNK %d %s %d\n", version, senderId, fileId, chunkNo);
         String chunkKey = fileId+"-"+chunkNo;
         if (version.equals("1.0"))
             PeerProtocol.getPeer().getStorage().getRestoreChunks().putIfAbsent(chunkKey, body);
-        else new Thread(new ReceiveRestoreEnh(fileId, chunkNo, new String(body))).start();
+        else new Thread(new ReceiveRestoreEnh(fileId, chunkNo, new String(body), senderId)).start();
     }
 
     private void manageChunkEnh(String version, int senderId, String fileId, int chunkNo) {

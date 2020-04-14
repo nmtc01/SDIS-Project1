@@ -65,9 +65,9 @@ public class MessageFactory {
 
     //<Version> CHUNKENH <SenderId> <FileId> <ChunkNo> <CRLF><CRLF>
     public byte[] chunkEnhMsg(String version, int senderId, String fileId, int chunkNo) {
-        this.messageString = version + " " + "CHUNKENH" + " " + senderId + " " + fileId + " " + chunkNo;
+        this.messageString = version + " " + "CHUNK" + " " + senderId + " " + fileId + " " + chunkNo;
         try {
-            String headerTerms = version + " " + "CHUNK" + " " + senderId + " " + fileId + " " + chunkNo + " \r\n\r\n" + InetAddress.getLocalHost().getHostAddress();
+            String headerTerms = this.messageString + " \r\n\r\n" + InetAddress.getLocalHost().getHostAddress();
             byte[] header = headerTerms.getBytes();
             return header;
         }catch (UnknownHostException e) {
