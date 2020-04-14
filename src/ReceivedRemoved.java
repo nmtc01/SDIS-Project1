@@ -12,7 +12,7 @@ public class ReceivedRemoved implements Runnable{
     @Override
     public void run() {
 
-        int desiredReplicationDegree = 0;
+        /*int desiredReplicationDegree = 0;
         Storage storage = PeerProtocol.getPeer().getStorage();
         for (int i = 0; i < storage.getStoredChunks().size(); i++) {
             Chunk chunk = storage.getStoredChunks().get(i);
@@ -32,6 +32,8 @@ public class ReceivedRemoved implements Runnable{
 
             
 
-        }
+        }*/
+
+
     }
 }
