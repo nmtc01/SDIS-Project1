@@ -21,6 +21,7 @@ public class Storage implements java.io.Serializable {
 
     public Storage(int peer_id) {
         this.free_space = 1000000000;
+        System.out.println(this.free_space);
         createPeerDirectory(peer_id);
     }
 
@@ -229,6 +230,7 @@ public class Storage implements java.io.Serializable {
 
     public void decrementChunkOccurences(String key) {
         if (this.chunks_current_degrees.containsKey(key) && this.chunks_current_degrees.get(key) != 0) {
+            System.out.println("decrementei");
             this.chunks_current_degrees.replace(key, this.chunks_current_degrees.get(key) - 1);
         }
     }
@@ -263,7 +265,7 @@ public class Storage implements java.io.Serializable {
     }
 
     public void reclaimSpace(double free_space) {
-        this.free_space = free_space;
+        this.free_space += free_space;
     }
 
     public void deleteChunk(Chunk chunk) {

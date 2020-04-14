@@ -1,9 +1,6 @@
 import java.io.File;
 import java.net.DatagramPacket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Peer implements PeerInterface{
@@ -202,6 +199,16 @@ public class Peer implements PeerInterface{
                     file.delete();
                     String chunkKey = chunk.getFile_id() + "-" + chunk.getChunk_no();
                     this.storage.decrementChunkOccurences(chunkKey);
+
+                    if (this.storage.getChunkCurrentDegree(chunkKey) < chunk.getDesired_replication_degree()) {
+                        byte msg2[] = messageFactory.putChunkMsg(chunk, chunk.getDesired_replication_degree(), this.peer_id);
+                        DatagramPacket sendPacket2 = new DatagramPacket(msg2, msg2.length);
+                        Random random = new Random();
+                        int random_value = random.nextInt(401);
+                        PeerProtocol.getThreadExecutor().schedule(new SendMessagesManager(sendPacket2), random_value, TimeUnit.MILLISECONDS);
+                        String messageString2 = messageFactory.getMessageString();
+                        System.out.printf("Sent message: %s\n", messageString2);
+                    }
                     chunkIterator.remove();
                 }
                 else {
@@ -209,7 +216,7 @@ public class Peer implements PeerInterface{
                 }
             }
 
-            this.storage.reclaimSpace(max_space - this.storage.getOccupiedSpace());
+            this.storage.reclaimSpace(max_space);
 
         }
 
