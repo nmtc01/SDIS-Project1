@@ -56,6 +56,9 @@ public class Storage implements java.io.Serializable {
     }
 
     public void storeFile(FileInfo file, int peer_id) {
+        if (file.getFile().length() > free_space)
+            return;
+
         String fileFolder;
         if (this.isUnix)
             fileFolder = directory.getPath() + "/file" + file.getFileId();
@@ -78,6 +81,9 @@ public class Storage implements java.io.Serializable {
     }
 
     public void restoreFile(File fileIn) {
+        if (fileIn.length() > free_space)
+            return;
+
         File fileFolder;
         boolean can_export = true;
         if (this.isUnix)
@@ -109,6 +115,8 @@ public class Storage implements java.io.Serializable {
             e.printStackTrace();
         }
         this.restoreChunks.clear();
+
+        decFreeSpace(fileOut.length());
     }
 
     public void exportFile(File directory, File fileIn) {
@@ -154,6 +162,9 @@ public class Storage implements java.io.Serializable {
     }
 
     public void storeChunk(Chunk chunk) {
+        if (chunk.getContent().length > free_space)
+            return;
+
         //Store on system
         String fileFolder;
         if (this.isUnix)
