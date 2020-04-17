@@ -348,4 +348,15 @@ public class Storage implements java.io.Serializable {
             return 0;
         }
     }
+
+    public boolean hasStored(String chunkKey) {
+        for (int key : peers_with_chunks.keySet()) {
+            for (int i = 0; i < peers_with_chunks.get(key).size(); i++) {
+                if (peers_with_chunks.get(key).get(i).equals(chunkKey))
+                    return true;
+            }
+        }
+
+        return false;
+    }
 }

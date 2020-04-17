@@ -25,7 +25,7 @@ public class PutChunkAttempts implements Runnable {
         int currentRepDeg = PeerProtocol.getPeer().getStorage().getChunkCurrentDegree(this.chunkKey);
 
         if (!PeerProtocol.getProtocol_version().equals("1.0")) {
-            if (currentRepDeg < this.desiredRepDeg && this.counter < this.attempts) {
+            if (currentRepDeg < this.desiredRepDeg && this.counter < this.attempts && !PeerProtocol.getPeer().getStorage().hasStored(this.chunkKey)) {
                 new Thread(new SendMessagesManager(this.message)).start();
                 System.out.printf("Sent message: %s\n", this.messageHeader);
                 this.counter++;
@@ -33,7 +33,7 @@ public class PutChunkAttempts implements Runnable {
                 PeerProtocol.getThreadExecutor().schedule(this, this.time, TimeUnit.SECONDS);
             }
         }
-        else if (this.counter < this.attempts) {
+        else if (this.counter < this.attempts && !PeerProtocol.getPeer().getStorage().hasStored(this.chunkKey)) {
             new Thread(new SendMessagesManager(this.message)).start();
             System.out.printf("Sent message: %s\n", this.messageHeader);
             this.counter++;
