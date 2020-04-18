@@ -29,6 +29,9 @@ file_name != file_absolute_path
 To clean up:
 /bin/bash cleanup.sh peer_id - deletes the directory of a peer inside PeerProtocol directory and also its directory in Storage.
 
+When writing the scripts, a fault was detected in the version 1.0 of the backup protocol. A condition was missing which prevents the peer from using all its 5 attempts of sending PUTCHUNK, even when the STORED message is received sucessfully.
+The problem was solved and the tag was changed.
+
 JAVA SE version 11
 
 T3G05
