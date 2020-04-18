@@ -1,6 +1,6 @@
 To build the project, run in this order and from directory scripts:
 1. /bin/bash compile.sh - creates a directory build with the compiled java classes
-2. /bin/bash setup.sh peer_id - creates a directory resources in the directory build
+2. /bin/bash setup.sh - creates a directory resources in the directory build
 3. /bin/bash rmiregistry.sh port - sets up rmi
 
 To run the project:

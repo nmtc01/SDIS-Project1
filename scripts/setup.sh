@@ -2,7 +2,7 @@
 
 # Placeholder for setup script
 # To be executed on the root of the compiled tree
-# Requires one argument: the peer id
+# Requires zero arguments.
 # Sets up the directory tree for storing 
 #  both the chunks and the restored files of
 #  either a single peer, in which case you may or not use the argument
@@ -12,11 +12,9 @@
 # Check number input arguments
 argc=$#
 
-if ((argc == 1 ))
+if ((argc != 0 ))
 then
-	peer_id=$1
-else
-	echo "Usage: $0 [<peer_id>]]"
+	echo "Usage: $0"
 	exit 1
 fi
 
